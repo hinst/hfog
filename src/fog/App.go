@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"sync/atomic"
 	"time"
 )
 
@@ -15,13 +16,16 @@ const FogApiUrl = "/api.asp"
 
 type TApp struct {
 	Config *TConfig
+	Active int32
 }
 
 func (this *TApp) Create() *TApp {
+	this.Active = 1
 	return this
 }
 
 func (this *TApp) Run() {
+	this.Prepare()
 	this.ReadConfig()
 	var bugs = this.ReadBugs()
 	var remainingBugs = this.RemoveExistingBugs(bugs)
@@ -36,7 +40,9 @@ func (this *TApp) Run() {
 		var writeFileResult = ioutil.WriteFile(filePath, data, os.ModePerm)
 		AssertResult(writeFileResult)
 		time.Sleep(300 * time.Millisecond)
-		break
+		if false == this.CheckActive() {
+			break
+		}
 	}
 }
 
@@ -72,7 +78,9 @@ func (this *TApp) GetURL() string {
 }
 
 func (this *TApp) GetResponse(url string) *http.Response {
-	WriteLog("Get " + url)
+	if false {
+		WriteLog("Get " + url)
+	}
 	var response, responseResult = http.Get(url)
 	AssertResult(responseResult)
 	return response
@@ -141,4 +149,23 @@ func (this *TApp) LoadBug(bug *TBugListCase) []byte {
 		"&q=" + url.QueryEscape(bug.IxBug) +
 		"&cols=events,sTitle"
 	return this.Get(url)
+}
+
+func (this *TApp) CheckActive() bool {
+	return atomic.LoadInt32(&this.Active) > 0
+}
+
+func (this *TApp) SetActive(v bool) {
+	if v {
+		atomic.StoreInt32(&this.Active, 1)
+	} else {
+		atomic.StoreInt32(&this.Active, 0)
+	}
+}
+
+func (this *TApp) Prepare() {
+	InstallShutdownReceiver(
+		func() {
+			this.SetActive(false)
+		})
 }
