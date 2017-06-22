@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"time"
 )
 
 const FogApiUrl = "/api.asp"
@@ -25,6 +26,18 @@ func (this *TApp) Run() {
 	var bugs = this.ReadBugs()
 	var remainingBugs = this.RemoveExistingBugs(bugs)
 	WriteLog("Need bugs: " + strconv.Itoa(len(remainingBugs.Cases.Cases)) + " of " + strconv.Itoa(len(bugs.Cases.Cases)))
+	for bugIndex, bug := range remainingBugs.Cases.Cases {
+		var data = this.LoadBug(&bug)
+		var filePath = this.GetBugFilePath(&bug)
+		WriteLog("Now writing " +
+			strconv.Itoa(bugIndex) + "/" + strconv.Itoa(len(remainingBugs.Cases.Cases)) +
+			"//" + strconv.Itoa(len(bugs.Cases.Cases)) +
+			" " + filePath)
+		var writeFileResult = ioutil.WriteFile(filePath, data, os.ModePerm)
+		AssertResult(writeFileResult)
+		time.Sleep(300 * time.Millisecond)
+		break
+	}
 }
 
 func (this *TApp) ReadConfig() {
@@ -108,11 +121,24 @@ func (this *TApp) RemoveExistingBugs(a *TBugList) *TBugList {
 }
 
 func (this *TApp) CheckHasBug(bug *TBugListCase) bool {
-	var bugFilePath = "data/" + bug.IxBug + ".xml"
+	var bugFilePath = this.GetBugFilePath(bug)
 	if false {
 		WriteLog(bugFilePath)
 	}
 	var _, err = os.Stat(bugFilePath)
 	var exists = false == os.IsNotExist(err)
 	return exists
+}
+
+func (this *TApp) GetBugFilePath(bug *TBugListCase) string {
+	return "data/" + bug.IxBug + ".xml"
+}
+
+func (this *TApp) LoadBug(bug *TBugListCase) []byte {
+	var url = this.GetURL() +
+		"?token=" + url.QueryEscape(this.Config.Token) +
+		"&cmd=search" +
+		"&q=" + url.QueryEscape(bug.IxBug) +
+		"&cols=events,sTitle"
+	return this.Get(url)
 }

@@ -1,2 +1,12 @@
 Read all bugs with active filter:
-http://fogbugz.harrisbroadcast.com/api.asp?token=1&cmd=listCases
+http://fogbugz.com/api.asp
+	?token=1
+	&cmd=listCases
+
+Read bug:
+http://fogbugz.com/api.asp
+	?token=1token1
+	&cmd=search
+	&q=1bugnumber1
+	&cols=events,sTitle
+	
