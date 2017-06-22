@@ -22,7 +22,9 @@ func (this *TApp) Create() *TApp {
 
 func (this *TApp) Run() {
 	this.ReadConfig()
-	this.ReadBugs()
+	var bugs = this.ReadBugs()
+	var remainingBugs = this.RemoveExistingBugs(bugs)
+	WriteLog("Need bugs: " + strconv.Itoa(len(remainingBugs.Cases.Cases)) + " of " + strconv.Itoa(len(bugs.Cases.Cases)))
 }
 
 func (this *TApp) ReadConfig() {
@@ -70,13 +72,13 @@ func (this *TApp) Get(url string) []byte {
 	return data
 }
 
-func (this *TApp) ReadBugs() {
+func (this *TApp) ReadBugs() *TBugList {
 	var bugs TBugList
 	var data, readResult = ioutil.ReadFile("data/bugs.xml")
 	AssertResult(readResult)
 	var decodeResult = xml.Unmarshal(data, &bugs)
 	AssertResult(decodeResult)
-	WriteLog("Number of bugs: " + strconv.Itoa(len(bugs.Cases.Cases)))
+	return &bugs
 }
 
 func (this *TApp) WriteSampleBugs() {
@@ -93,4 +95,24 @@ func (this *TApp) WriteSampleBugs() {
 	var writeResult = ioutil.WriteFile("bugs.xml", data, os.ModePerm)
 	AssertResult(writeResult)
 	Unuse(bugs)
+}
+
+func (this *TApp) RemoveExistingBugs(a *TBugList) *TBugList {
+	var result TBugList
+	for _, bug := range a.Cases.Cases {
+		if false == this.CheckHasBug(&bug) {
+			result.Cases.Cases = append(result.Cases.Cases, bug)
+		}
+	}
+	return &result
+}
+
+func (this *TApp) CheckHasBug(bug *TBugListCase) bool {
+	var bugFilePath = "data/" + bug.IxBug + ".xml"
+	if false {
+		WriteLog(bugFilePath)
+	}
+	var _, err = os.Stat(bugFilePath)
+	var exists = false == os.IsNotExist(err)
+	return exists
 }
