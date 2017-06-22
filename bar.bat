@@ -1,2 +1,2 @@
 set GOPATH=%~dp0
-go build hn_app && hn_app.exe
+go build fog_app && fog_app.exe
