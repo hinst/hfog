@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"fog"
+)
 
 func main() {
 	fmt.Println("STARTING...")
+	var app = (&fog.TApp{}).Create()
+	app.Run()
 }
