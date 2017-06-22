@@ -1,7 +1,9 @@
 package fog
 
 type TConfig struct {
-	RootURL string
+	RootURL  string
+	Email    string
+	Password string
 }
 
 func (this *TConfig) Create() *TConfig {
