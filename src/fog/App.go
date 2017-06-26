@@ -39,7 +39,7 @@ func (this *TApp) Run() {
 			" " + filePath)
 		var writeFileResult = ioutil.WriteFile(filePath, data, os.ModePerm)
 		AssertResult(writeFileResult)
-		time.Sleep(300 * time.Millisecond)
+		time.Sleep(3000 * time.Millisecond)
 		if false == this.CheckActive() {
 			break
 		}
