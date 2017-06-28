@@ -1,6 +1,6 @@
 import React from 'react';
 
-class BugHeadItem extends React.Component {
+class BugHeadItem extends React.PureComponent {
 
 	constructor(props) {
 		super(props);
