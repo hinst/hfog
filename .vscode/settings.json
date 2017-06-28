@@ -1,5 +1,5 @@
 {
-    "go.buildOnSave": "workspace",
+    "go.buildOnSave": "package",
     "go.lintOnSave": "off",
     "go.vetOnSave": "off",
     "go.buildFlags": [],
