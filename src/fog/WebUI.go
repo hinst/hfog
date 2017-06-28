@@ -20,7 +20,7 @@ func (this *TWebUI) Create() *TWebUI {
 
 func (this *TWebUI) Start() {
 	this.LoadBugs()
-	http.HandleFunc(this.URL+"/bugs", this.GetBugs)
+	this.AddRequestHandler("/bugs", this.GetBugs)
 }
 
 func (this *TWebUI) ReadBugList() {
@@ -67,4 +67,12 @@ func (this *TWebUI) GetBugs(response http.ResponseWriter, request *http.Request)
 		response.Header().Set("Content-Type", "application/json")
 		response.Write(data)
 	}
+}
+
+func (this *TWebUI) AddRequestHandler(url string, f func(response http.ResponseWriter, request *http.Request)) {
+	var wrappedFunc = func(response http.ResponseWriter, request *http.Request) {
+		response.Header().Set("Access-Control-Allow-Origin", "*")
+		f(response, request)
+	}
+	http.HandleFunc(this.URL+url, wrappedFunc)
 }
