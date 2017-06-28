@@ -12,7 +12,7 @@ func StartHttpServer(address string) *http.Server {
 	return server
 }
 
-func StopHttpServer(server *http.Server) error {
-	var ctx, _ = context.WithTimeout(context.Background(), 5*time.Second)
+func StopHttpServer(server *http.Server, timeout time.Duration) error {
+	var ctx, _ = context.WithTimeout(context.Background(), timeout)
 	return server.Shutdown(ctx)
 }
