@@ -16,6 +16,7 @@ func (this *TWebApp) Create() *TWebApp {
 }
 
 func (this *TWebApp) Run() {
+	WriteLog("Starting...")
 	this.WebUI = (&TWebUI{}).Create()
 	this.WebUI.Start()
 	var server = hgo.StartHttpServer(":9000")
