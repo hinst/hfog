@@ -1,4 +1,4 @@
-package fog
+package hgo
 
 import (
 	"os"

@@ -3,6 +3,7 @@ package fog
 import (
 	"encoding/json"
 	"encoding/xml"
+	"hgo"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -164,7 +165,7 @@ func (this *TApp) SetActive(v bool) {
 }
 
 func (this *TApp) Prepare() {
-	InstallShutdownReceiver(
+	hgo.InstallShutdownReceiver(
 		func() {
 			this.SetActive(false)
 		})
