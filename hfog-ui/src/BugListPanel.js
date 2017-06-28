@@ -10,7 +10,7 @@ class BugListPanel extends React.Component {
 	render() {
 		const bugHeadItems = this.props.bugs.map(
 			(bug) => {
-				return (<BugHeadItem key={bug.number} number={bug.number} title={bug.title}></BugHeadItem>)
+				return (<BugHeadItem key={bug.Number} number={bug.Number} title={bug.Title}></BugHeadItem>);
 			}
 		);
 		return (<div>
