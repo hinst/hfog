@@ -4,7 +4,7 @@ import "encoding/xml"
 
 type TBugData struct {
 	XMLName xml.Name `xml:response`
-	Cases   []TBugCasesData
+	Cases   TBugCasesData
 }
 
 type TBugCasesData struct {
