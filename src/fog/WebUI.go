@@ -14,7 +14,7 @@ type TWebUI struct {
 }
 
 func (this *TWebUI) Create() *TWebUI {
-	this.URL = "FogBugzBackup"
+	this.URL = "/FogBugzBackup"
 	return this
 }
 
@@ -63,5 +63,8 @@ func (this *TWebUI) GetBugs(response http.ResponseWriter, request *http.Request)
 	}
 	var data, marshalResult = json.Marshal(&bugs)
 	WriteLogResult(marshalResult)
-	response.Write(data)
+	if marshalResult == nil {
+		response.Header().Set("Content-Type", "application/json")
+		response.Write(data)
+	}
 }
