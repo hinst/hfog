@@ -1,12 +1,12 @@
 package fog
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"io/ioutil"
+)
 
 type TBugListCase struct {
 	IxBug string `xml:"ixBug,attr"`
-}
-
-type TBugListCaseCtnr struct {
 }
 
 type TBugListCases struct {
@@ -17,4 +17,13 @@ type TBugListCases struct {
 type TBugList struct {
 	XMLName xml.Name `xml:response`
 	Cases   TBugListCases
+}
+
+func ReadBugsFromFile(filePath string) *TBugList {
+	var bugs TBugList
+	var data, readResult = ioutil.ReadFile(filePath)
+	AssertResult(readResult)
+	var decodeResult = xml.Unmarshal(data, &bugs)
+	AssertResult(decodeResult)
+	return &bugs
 }
