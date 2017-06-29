@@ -3,6 +3,13 @@ import AppHeader from "./AppHeader.js";
 
 class BugSearchPanel extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {
+			keywords: "",
+		};
+	}
+
 	render() {
 		return (<div className="w3-container">
 			{AppHeader()}
@@ -11,11 +18,38 @@ class BugSearchPanel extends React.Component {
 				<div style={{height: "8px"}}></div>
 				<label><b>Keywords:</b></label>
 				<br/>
-				<input className="w3-input w3-border" type="text"/>
+				<input 
+					type="text"
+					ref={(thing) => { this.keywordsField = thing; }} 
+					className="w3-input w3-border" 
+					onChange={
+						(event) => {
+							this.setState(
+								{keywords: event.target.value}
+							);
+						}
+					}
+					onKeyPress={
+						(event) => {
+							if (event.key === 'Enter') {
+								this.receiveGoClick();
+							}
+						}
+					}
+				/>
 				<div style={{height: "8px"}}></div>				
-				<button className="w3-btn w3-black">Go</button>
+				<button className="w3-btn w3-black" onClick={() => this.receiveGoClick()}>Go</button>
 			</div>
 		</div>)
+	}
+
+	receiveGoClick() {
+		this.props.searchActReceiver(this.state.keywords);
+	}
+
+	componentDidMount() {
+		this.keywordsField.focus();
+		console.log("?");
 	}
 
 }

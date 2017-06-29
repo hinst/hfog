@@ -1,6 +1,5 @@
 import React from 'react';
 import * as Api from "./Api";
-import BugHeadItem from "./BugHeadItem";
 import BugSearchPanel from "./BugSearchPanel";
 import BugListView from "./BugListView";
 
@@ -20,7 +19,10 @@ class BugListPanel extends React.Component {
 		return (<div>
 			<div className="overlay" style={{ zIndex: 1, display: this.getSearchPanelDisplay() }}>
 				<div className="overlay-content">
-					<BugSearchPanel backClickReceiver={ ()=>this.receiveSearchPanelClickBack() }>
+					<BugSearchPanel 
+						backClickReceiver={ () => this.receiveSearchPanelClickBack() }
+						searchActReceiver={ (keywords) => this.receiveSearchAct(keywords) }
+					>
 					</BugSearchPanel>
 				</div>
 			</div>
@@ -58,6 +60,11 @@ class BugListPanel extends React.Component {
   receiveBugs(data) {
     console.log(data.length);
     this.setState({bugs: data});
+  }
+
+  receiveSearchAct(keywords) {
+	this.setState({searchPanelVisible: false});
+	console.log(keywords);
   }
 
 }
