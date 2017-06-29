@@ -1,4 +1,5 @@
 import React from 'react';
+import * as Api from "./Api";
 import BugHeadItem from "./BugHeadItem";
 import BugSearchPanel from "./BugSearchPanel";
 import BugListView from "./BugListView";
@@ -8,9 +9,11 @@ class BugListPanel extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			bugs: [],
       		sortAscending: false,			
 			searchPanelVisible: false,
 		}
+	    this.requestBugs();
 	}
 
 	render() {
@@ -28,7 +31,7 @@ class BugListPanel extends React.Component {
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={ () => this.receiveSearchClick() }>Search</button>
 			</div>
-			<BugListView bugs={this.props.bugs} sortAscending={this.state.sortAscending}></BugListView>
+			<BugListView bugs={this.state.bugs} sortAscending={this.state.sortAscending}></BugListView>
 		</div>);
 	}
 
@@ -47,6 +50,15 @@ class BugListPanel extends React.Component {
 	receiveSearchPanelClickBack() {
 		this.setState({searchPanelVisible: false});
 	}
+
+  requestBugs() {
+    Api.LoadBugList(data => this.receiveBugs(data));
+  }
+
+  receiveBugs(data) {
+    console.log(data.length);
+    this.setState({bugs: data});
+  }
 
 }
 

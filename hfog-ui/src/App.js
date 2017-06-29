@@ -10,9 +10,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      bugs: [],
     };
-    this.requestBugs();
   }
 
   sampleBugs = [
@@ -28,18 +26,9 @@ class App extends Component {
           <div className="overlay-content"> 
           </div>
         </div>
-        <BugListPanel bugs={this.state.bugs}></BugListPanel>
+        <BugListPanel></BugListPanel>
       </div>
     );
-  }
-
-  requestBugs() {
-    Api.LoadBugList(data => this.receiveBugs(data));
-  }
-
-  receiveBugs(data) {
-    console.log(data.length);
-    this.setState({bugs: data});
   }
 
 }
