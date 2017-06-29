@@ -7,11 +7,15 @@ import (
 )
 
 type TDBGenApp struct {
+	DB   *TDBMan
 	Bugs []TBugCaseData
 }
 
 func (this *TDBGenApp) Run() {
-
+	this.DB = (&TDBMan{}).Create()
+	this.DB.Start()
+	this.LoadBugs()
+	this.DB.Stop()
 }
 
 func (this *TDBGenApp) ReadBugData(id string) (result *TBugData) {
@@ -30,10 +34,11 @@ func (this *TDBGenApp) ReadBugData(id string) (result *TBugData) {
 
 func (this *TDBGenApp) LoadBugs() {
 	var bugListData = ReadBugsFromFile(hgo.AppDir + "/data/bugs.xml")
-	for _, item := range bugListData.Cases.Cases {
+	for itemIndex, item := range bugListData.Cases.Cases {
+		WriteLog("Writing item " + IntToStr(itemIndex))
 		var data = this.ReadBugData(item.IxBug)
 		if data != nil && len(data.Cases.Cases) > 0 {
-			this.Bugs = append(this.Bugs, data.Cases.Cases[0])
+			this.DB.WriteBugData(&data.Cases.Cases[0])
 		}
 	}
 	WriteLog("Loaded bugs: " + IntToStr(len(this.Bugs)))
