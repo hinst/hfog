@@ -3,6 +3,7 @@ import './3pty/w3.css';
 import BugListPanel from "./BugListPanel";
 import * as Api from "./Api";
 import "./App.css";
+import AppHeader from "./AppHeader.js";
 
 class App extends Component {
 
@@ -22,9 +23,7 @@ class App extends Component {
   render() {
     return (
       <div className="w3-container">
-        <div className="w3-container">
-          <h1>FogBugz backup</h1>
-        </div>
+        {AppHeader()}
         <div className="overlay" style={{zIndex: 1, display: "none"}}>
           <div className="overlay-content"> 
           </div>
