@@ -14,7 +14,8 @@ type TDBGenApp struct {
 func (this *TDBGenApp) Run() {
 	this.DB = (&TDBMan{}).Create()
 	this.DB.Start()
-	this.LoadBugs()
+	//this.LoadBugs()
+	this.DB.WriteToFile(hgo.AppDir + "/data/db-sh.bolt")
 	this.DB.Stop()
 }
 

@@ -68,3 +68,10 @@ func (this *TDBMan) GetTitles() (result map[int]string) {
 	})
 	return
 }
+
+func (this *TDBMan) WriteToFile(filePath string) {
+	this.db.View(func(tx *bolt.Tx) error {
+		tx.CopyFile(filePath, os.ModePerm)
+		return nil
+	})
+}
