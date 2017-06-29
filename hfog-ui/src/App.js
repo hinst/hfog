@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './3pty/w3.css';
 import BugListPanel from "./BugListPanel";
-import * as Api from "./Api";
 import "./App.css";
 import AppHeader from "./AppHeader.js";
 
