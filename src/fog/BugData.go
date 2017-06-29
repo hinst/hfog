@@ -42,3 +42,13 @@ func (this *TBugCaseEventData) ToDBStruct() TDBFlatStructArray {
 			"SHTML":          this.SHTML.Text,
 		})
 }
+
+func (this *TBugCaseEventData) LoadDBStruct(a TDBFlatStructArray) {
+	var fields = a.ReadStrings()
+	this.Dt = fields["Dt"]
+	this.SVerb.Text = fields["SVerb"]
+	this.EvtDescription.Text = fields["EvtDescription"]
+	this.SPerson.Text = fields["SPerson"]
+	this.S.Text = fields["S"]
+	this.SHTML.Text = fields["SHTML"]
+}
