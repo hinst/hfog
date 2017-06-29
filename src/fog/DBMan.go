@@ -4,8 +4,6 @@ import (
 	"hgo"
 	"os"
 
-	"net/url"
-
 	"github.com/boltdb/bolt"
 )
 
@@ -30,6 +28,12 @@ func (this *TDBMan) Start() {
 	})
 }
 
+func (this *TDBMan) Stop() {
+	if this.db != nil {
+		this.db.Close()
+	}
+}
+
 func (this *TDBMan) WriteBugData(bug *TBugCaseData) {
 	this.db.Update(func(tx *bolt.Tx) error {
 		DBManGetTitlesBucket(tx).Put(
@@ -50,29 +54,17 @@ func (this *TDBMan) WriteBugDataEvents(bug *TBugCaseData, tx *bolt.Tx) {
 	}
 }
 
-func (this *TDBMan) Stop() {
-	if this.db != nil {
-		this.db.Close()
-	}
-}
-
-var DBManTitlesBucketKey = []byte("Titles")
-
-func DBManGetTitlesBucket(tx *bolt.Tx) *bolt.Bucket {
-	return tx.Bucket(DBManTitlesBucketKey)
-}
-
-var DBManEventsBucketKey = []byte("Events")
-
-func DBManGetEventsBucket(tx *bolt.Tx) *bolt.Bucket {
-	return tx.Bucket(DBManEventsBucketKey)
-}
-
-func GetDBManKey(ids []string) (result []byte) {
-	var text string
-	for _, id := range ids {
-		text += "/" + url.PathEscape(id)
-	}
-	result = []byte(text)
+func (this *TDBMan) GetTitles() (result map[int]string) {
+	result = make(map[int]string)
+	this.db.View(func(tx *bolt.Tx) error {
+		var bucket = DBManGetTitlesBucket(tx)
+		var cursor = bucket.Cursor()
+		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
+			var stringKey = string(key)
+			var intKey = StrToInt0(stringKey)
+			result[intKey] = string(value)
+		}
+		return nil
+	})
 	return
 }
