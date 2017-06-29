@@ -35,12 +35,19 @@ func (this *TDBMan) WriteBugData(bug *TBugCaseData) {
 		DBManGetTitlesBucket(tx).Put(
 			[]byte(bug.IxBug),
 			[]byte(bug.STitle.Text))
-		var eventsBucket = DBManGetEventsBucket(tx)
-		for eventIndex, event := range bug.Events.Events {
-			event.ToDBStruct().WriteToBucket(eventsBucket, []string{bug.IxBug, IntToStr(eventIndex)})
-		}
+		this.WriteBugDataEvents(bug, tx)
 		return nil
 	})
+}
+
+func (this *TDBMan) WriteBugDataEvents(bug *TBugCaseData, tx *bolt.Tx) {
+	var eventsBucket = DBManGetEventsBucket(tx)
+	eventsBucket.Put(
+		GetDBManKey([]string{bug.IxBug, "n"}),
+		[]byte(IntToStr(len(bug.Events.Events))))
+	for eventIndex, event := range bug.Events.Events {
+		event.ToDBStruct().WriteToBucket(eventsBucket, []string{bug.IxBug, IntToStr(eventIndex)})
+	}
 }
 
 func (this *TDBMan) Stop() {
