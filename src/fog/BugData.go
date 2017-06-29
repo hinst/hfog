@@ -30,3 +30,15 @@ type TBugCaseEventData struct {
 	S              TCDATA `xml:"s"`
 	SHTML          TCDATA `xml:"sHtml"`
 }
+
+func (this *TBugCaseEventData) ToDBStruct() TDBFlatStructArray {
+	return TDBFlatStructArray{}.SaveStrings(
+		map[string]string{
+			"Dt":             this.Dt,
+			"SVerb":          this.SVerb.Text,
+			"EvtDescription": this.EvtDescription.Text,
+			"SPerson":        this.SPerson.Text,
+			"S":              this.S.Text,
+			"SHTML":          this.SHTML.Text,
+		})
+}
