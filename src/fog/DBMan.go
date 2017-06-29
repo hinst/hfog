@@ -32,8 +32,13 @@ func (this *TDBMan) Start() {
 
 func (this *TDBMan) WriteBugData(bug *TBugCaseData) {
 	this.db.Update(func(tx *bolt.Tx) error {
-		var bucket = tx.Bucket(DBManTitlesBucketKey)
-		bucket.Put([]byte(bug.IxBug), []byte(bug.STitle.Text))
+		DBManGetTitlesBucket(tx).Put(
+			[]byte(bug.IxBug),
+			[]byte(bug.STitle.Text))
+		var eventsBucket = DBManGetEventsBucket(tx)
+		for eventIndex, event := range bug.Events.Events {
+			event.ToDBStruct().WriteToBucket(eventsBucket, []string{bug.IxBug, IntToStr(eventIndex)})
+		}
 		return nil
 	})
 }
@@ -45,11 +50,22 @@ func (this *TDBMan) Stop() {
 }
 
 var DBManTitlesBucketKey = []byte("Titles")
+
+func DBManGetTitlesBucket(tx *bolt.Tx) *bolt.Bucket {
+	return tx.Bucket(DBManTitlesBucketKey)
+}
+
 var DBManEventsBucketKey = []byte("Events")
 
-func GetDBManKey(ids ...string) (result string) {
+func DBManGetEventsBucket(tx *bolt.Tx) *bolt.Bucket {
+	return tx.Bucket(DBManEventsBucketKey)
+}
+
+func GetDBManKey(ids []string) (result []byte) {
+	var text string
 	for _, id := range ids {
-		result += url.PathEscape(id) + "/"
+		text += "/" + url.PathEscape(id)
 	}
+	result = []byte(text)
 	return
 }
