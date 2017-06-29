@@ -1,6 +1,7 @@
 import React from 'react';
 import BugHeadItem from "./BugHeadItem";
 import BugSearchPanel from "./BugSearchPanel";
+import BugListView from "./BugListView";
 
 class BugListPanel extends React.Component {
 
@@ -12,25 +13,7 @@ class BugListPanel extends React.Component {
 		}
 	}
 
-	getSortedBugs() {
-		const bugs = this.props.bugs.slice();
-		bugs.sort((a, b) => {
-			var diff = a.Number - b.Number;
-			if (false == this.state.sortAscending) {
-				diff = -diff;
-			}
-			return diff;
-		});
-		return bugs;
-	}
-
 	render() {
-		const bugs = this.getSortedBugs();
-		const bugHeadItems = bugs.map(
-			(bug) => {
-				return (<BugHeadItem key={bug.Number} number={bug.Number} title={bug.Title}></BugHeadItem>);
-			}
-		);
 		return (<div>
 			<div className="overlay" style={{ zIndex: 1, display: this.getSearchPanelDisplay() }}>
 				<div className="overlay-content">
@@ -45,7 +28,7 @@ class BugListPanel extends React.Component {
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={ () => this.receiveSearchClick() }>Search</button>
 			</div>
-			{bugHeadItems}
+			<BugListView bugs={this.props.bugs} sortAscending={this.state.sortAscending}></BugListView>
 		</div>);
 	}
 

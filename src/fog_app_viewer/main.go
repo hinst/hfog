@@ -1,8 +1,13 @@
 package main
 
-import "fog"
+import (
+	"fmt"
+	"fog"
+)
 
 func main() {
+	fmt.Println("STARTING...")
 	var app = (&fog.TWebApp{}).Create()
 	app.Run()
+	fmt.Println("EXITING...")
 }
