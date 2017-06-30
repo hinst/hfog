@@ -17,7 +17,7 @@ class BugListView extends React.PureComponent {
 		const bugs = this.props.bugs.slice();
 		bugs.sort((a, b) => {
 			var diff = a.Number - b.Number;
-			if (false == this.props.sortAscending) {
+			if ( ! this.props.sortAscending) {
 				diff = -diff;
 			}
 			return diff;

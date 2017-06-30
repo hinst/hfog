@@ -3,7 +3,7 @@ import './3pty/w3.css';
 import BugListPanel from "./BugListPanel";
 import "./App.css";
 import * as AppHeader from "./AppHeader.js";
-import { BrowserRouter as Router, Route, IndexRoute } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import BugView from './BugView';
 
 const BugList = () => {

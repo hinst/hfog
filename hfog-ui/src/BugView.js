@@ -15,7 +15,7 @@ class BugView extends React.Component {
                 {AppHeader.AppHeaderPanel()}
                 <Link className="w3-btn w3-black" to="/"> ← Bug list</Link>
                 <div style={{display: "inline-block", minWidth: "10px"}}/>
-                Bug {this.props.bugId}
+                Bug {this.props.match.params.bugId}
             </div>
         );
     }
