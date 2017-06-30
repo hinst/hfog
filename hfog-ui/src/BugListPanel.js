@@ -29,7 +29,7 @@ class BugListPanel extends React.Component {
 			<div className="w3-panel">
 				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>{this.state.sortAscending ? "▲" : "▼"}</button>
 				<span style={{marginLeft: "4px"}}></span>
-				<button className="w3-btn w3-black">Refresh</button>
+				<button className="w3-btn w3-black" onClick={() => this.receiveRefreshClick()}>Refresh</button>
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={ () => this.receiveSearchClick() }>Search</button>
 			</div>
@@ -58,7 +58,6 @@ class BugListPanel extends React.Component {
   }
 
   receiveBugs(data) {
-    console.log(data.length);
     this.setState({bugs: data});
   }
 
@@ -66,6 +65,11 @@ class BugListPanel extends React.Component {
 	this.setState({searchPanelVisible: false});
 	console.log(keywords);
   }
+
+	receiveRefreshClick() {
+		this.setState({bugs: []});
+		this.requestBugs();
+	}
 
 }
 
