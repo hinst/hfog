@@ -28,3 +28,14 @@ func (this TDBFlatStructArray) ReadStrings() (result map[string]string) {
 	}
 	return
 }
+
+func (this TDBFlatStructArray) ReadFromBucket(bucket *bolt.Bucket, key []string) (result TDBFlatStructArray) {
+	result = make(TDBFlatStructArray, len(this))
+	for i, item := range this {
+		result[i].Key = this[i].Key
+		var fullKey = GetDBManKey(append(key, item.Key))
+		var data = bucket.Get(fullKey)
+		result[i].Data = string(data)
+	}
+	return
+}

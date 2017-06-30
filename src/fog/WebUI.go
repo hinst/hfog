@@ -67,3 +67,7 @@ func (this *TWebUI) InstallUiFileHandlers() {
 	this.InstallUiFileHandler("/static/js")
 	this.InstallUiFileHandler("/static/media")
 }
+
+func (this *TWebUI) GetBug(response http.ResponseWriter, request *http.Request) {
+
+}

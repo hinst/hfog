@@ -75,3 +75,32 @@ func (this *TDBMan) WriteToFile(filePath string) {
 		return nil
 	})
 }
+
+func (this *TDBMan) LoadBugData(bugId string) {
+	this.db.Update(func(tx *bolt.Tx) error {
+		return nil
+	})
+}
+
+func (this *TDBMan) ReadBugData(tx *bolt.Tx, bugId string) (result *TBugCaseData) {
+	var titleData = DBManGetTitlesBucket(tx).Get([]byte(bugId))
+	if titleData != nil {
+		result = &TBugCaseData{}
+		result.IxBug = bugId
+		result.STitle.Text = string(titleData)
+		this.ReadBugEvents(tx, result)
+	}
+	return
+}
+
+func (this *TDBMan) ReadBugEvents(tx *bolt.Tx, bug *TBugCaseData) {
+	var eventsBucket = DBManGetEventsBucket(tx)
+	var countOfEvents = StrToInt0(string(
+		eventsBucket.Get(GetDBManKey([]string{bug.IxBug, "n"})),
+	))
+	bug.Events.Events = make([]TBugCaseEventData, countOfEvents)
+	for eventIndex, event := range bug.Events.Events {
+		var dbStruct = event.ToDBStruct().ReadFromBucket(eventsBucket, []string{bug.IxBug, IntToStr(eventIndex)})
+		bug.Events.Events[eventIndex].LoadDBStruct(dbStruct)
+	}
+}
