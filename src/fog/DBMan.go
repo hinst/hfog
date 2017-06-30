@@ -76,10 +76,12 @@ func (this *TDBMan) WriteToFile(filePath string) {
 	})
 }
 
-func (this *TDBMan) LoadBugData(bugId string) {
+func (this *TDBMan) LoadBugData(bugId string) (result *TBugCaseData) {
 	this.db.Update(func(tx *bolt.Tx) error {
+		result = this.ReadBugData(tx, bugId)
 		return nil
 	})
+	return
 }
 
 func (this *TDBMan) ReadBugData(tx *bolt.Tx, bugId string) (result *TBugCaseData) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import * as AppHeader from "./AppHeader.js";
-import Api from './Api';
+import * as Api from './Api';
 
 class BugView extends React.Component {
 

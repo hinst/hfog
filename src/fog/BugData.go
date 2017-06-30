@@ -52,3 +52,22 @@ func (this *TBugCaseEventData) LoadDBStruct(a TDBFlatStructArray) {
 	this.S.Text = fields["S"]
 	this.SHTML.Text = fields["SHTML"]
 }
+
+func (this *TBugCaseData) ToBugDataWeb() (result *TBugDataWeb) {
+	result = &TBugDataWeb{
+		Id:    this.IxBug,
+		Title: this.STitle.Text,
+	}
+	for _, event := range this.Events.Events {
+		var newEvent = TBugDataWebEvent{
+			Moment:      event.Dt,
+			Verb:        event.SVerb.Text,
+			Description: event.EvtDescription.Text,
+			Person:      event.SPerson.Text,
+			Text:        event.S.Text,
+			HTML:        event.SHTML.Text,
+		}
+		result.Events = append(result.Events, newEvent)
+	}
+	return
+}
