@@ -2,6 +2,8 @@ package fog
 
 import (
 	"encoding/json"
+	"fmt"
+	"hgo"
 	"net/http"
 )
 
@@ -17,6 +19,7 @@ func (this *TWebUI) Create() *TWebUI {
 
 func (this *TWebUI) Start() {
 	this.AddRequestHandler("/bugs", this.GetBugs)
+	this.InstallUiFileHandlers()
 }
 
 func (this *TWebUI) GetBugs(response http.ResponseWriter, request *http.Request) {
@@ -43,4 +46,24 @@ func (this *TWebUI) AddRequestHandler(url string, f func(response http.ResponseW
 		f(response, request)
 	}
 	http.HandleFunc(this.URL+url, wrappedFunc)
+}
+
+func (this *TWebUI) InstallUiFileHandler(subDir string) {
+	var directoryPath = hgo.AppDir + "/hfog-ui/build" + subDir
+	var url = this.URL + subDir + "/"
+	var fileDirectory = http.Dir(directoryPath)
+	var fileServerHandler = http.FileServer(fileDirectory)
+	fmt.Println(url + " -> " + directoryPath)
+	http.HandleFunc(url,
+		hgo.WrapFixJavaScriptContentType(
+			http.StripPrefix(url, fileServerHandler),
+		),
+	)
+}
+
+func (this *TWebUI) InstallUiFileHandlers() {
+	this.InstallUiFileHandler("")
+	this.InstallUiFileHandler("/static/css")
+	this.InstallUiFileHandler("/static/js")
+	this.InstallUiFileHandler("/static/media")
 }
