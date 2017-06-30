@@ -2,15 +2,12 @@ package fog
 
 import (
 	"encoding/json"
-	"encoding/xml"
-	"hgo"
-	"io/ioutil"
 	"net/http"
 )
 
 type TWebUI struct {
-	Bugs []TBugCaseData
-	URL  string
+	URL string
+	DB  *TDBMan
 }
 
 func (this *TWebUI) Create() *TWebUI {
@@ -19,7 +16,6 @@ func (this *TWebUI) Create() *TWebUI {
 }
 
 func (this *TWebUI) Start() {
-	this.LoadBugs()
 	this.AddRequestHandler("/bugs", this.GetBugs)
 }
 
@@ -27,38 +23,14 @@ func (this *TWebUI) ReadBugList() {
 	ReadBugsFromFile("data/bugs.xml")
 }
 
-func (this *TWebUI) ReadBugData(id string) (result *TBugData) {
-	var data, readFileResult = ioutil.ReadFile(hgo.AppDir + "/data/" + id + ".xml")
-	WriteLogResult(readFileResult)
-	if readFileResult == nil {
-		result = &TBugData{}
-		var unmarshalResult = xml.Unmarshal(data, result)
-		WriteLogResult(unmarshalResult)
-		if nil != unmarshalResult {
-			result = nil
-		}
-	}
-	return
-}
-
-func (this *TWebUI) LoadBugs() {
-	var bugListData = ReadBugsFromFile(hgo.AppDir + "/data/bugs.xml")
-	for _, item := range bugListData.Cases.Cases {
-		var data = this.ReadBugData(item.IxBug)
-		if data != nil && len(data.Cases.Cases) > 0 {
-			this.Bugs = append(this.Bugs, data.Cases.Cases[0])
-		}
-	}
-	WriteLog("Loaded bugs: " + IntToStr(len(this.Bugs)))
-}
-
 func (this *TWebUI) GetBugs(response http.ResponseWriter, request *http.Request) {
 	var bugs []TBugHeaderWebStruct
-	for _, item := range this.Bugs {
+	var titles = this.DB.GetTitles()
+	for key, value := range titles {
 		bugs = append(bugs,
 			TBugHeaderWebStruct{
-				Number: StrToInt0(item.IxBug),
-				Title:  item.STitle.Text,
+				Number: key,
+				Title:  value,
 			})
 	}
 	var data, marshalResult = json.Marshal(&bugs)
