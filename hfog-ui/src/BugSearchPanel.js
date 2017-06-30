@@ -49,7 +49,6 @@ class BugSearchPanel extends React.Component {
 
 	componentDidMount() {
 		this.keywordsField.focus();
-		console.log("?");
 	}
 
 }

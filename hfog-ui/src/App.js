@@ -3,6 +3,15 @@ import './3pty/w3.css';
 import BugListPanel from "./BugListPanel";
 import "./App.css";
 import AppHeader from "./AppHeader.js";
+import { BrowserRouter as Router, Route, IndexRoute } from 'react-router-dom';
+import BugView from './BugView';
+
+const BugList = () => (
+  <div>
+    {AppHeader()}
+    <BugListPanel></BugListPanel>
+  </div>
+);
 
 class App extends Component {
 
@@ -20,12 +29,12 @@ class App extends Component {
   render() {
     return (
       <div className="w3-container">
-        {AppHeader()}
-        <div className="overlay" style={{zIndex: 1, display: "none"}}>
-          <div className="overlay-content"> 
+        <Router>
+          <div>
+            <Route exact path="/" component={BugList}/>
+            <Route path="/bug" component={BugView}/>
           </div>
-        </div>
-        <BugListPanel></BugListPanel>
+        </Router>
       </div>
     );
   }
