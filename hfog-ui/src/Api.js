@@ -8,3 +8,7 @@ export function LoadBugList(receiver) {
     LoadJson("/bugs", receiver);
 }
 
+export function LoadBug(bugId, receiver) {
+    LoadJson("/getBug?id=" + encodeURIComponent(bugId), receiver);
+}
+

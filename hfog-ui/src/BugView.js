@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import * as AppHeader from "./AppHeader.js";
+import Api from './Api';
 
 class BugView extends React.Component {
 
@@ -18,6 +19,13 @@ class BugView extends React.Component {
                 Bug {this.props.match.params.bugId}
             </div>
         );
+    }
+
+    requestContent() {
+        Api.LoadBug(this.props.match.params.bugId, (data) => this.receiveContent(data));
+    }
+
+    receiveContent(data) {
     }
 
 }
