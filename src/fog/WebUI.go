@@ -19,12 +19,8 @@ func (this *TWebUI) Start() {
 	this.AddRequestHandler("/bugs", this.GetBugs)
 }
 
-func (this *TWebUI) ReadBugList() {
-	ReadBugsFromFile("data/bugs.xml")
-}
-
 func (this *TWebUI) GetBugs(response http.ResponseWriter, request *http.Request) {
-	var bugs []TBugHeaderWebStruct
+	var bugs = make([]TBugHeaderWebStruct, 0)
 	var titles = this.DB.GetTitles()
 	for key, value := range titles {
 		bugs = append(bugs,
