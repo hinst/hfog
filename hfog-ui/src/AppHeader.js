@@ -1,6 +1,6 @@
 import React from 'react';
 
-function AppHeader() {
+function AppHeaderPanel() {
 	return (
 		<div className="w3-container">
     		<h1>FogBugz backup</h1>
@@ -8,4 +8,6 @@ function AppHeader() {
 	);
 };
 
-export default AppHeader;
+const AppTitle = "FogBugz backup";
+
+export {AppHeaderPanel, AppTitle};

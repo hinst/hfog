@@ -2,16 +2,19 @@ import React, { Component } from 'react';
 import './3pty/w3.css';
 import BugListPanel from "./BugListPanel";
 import "./App.css";
-import AppHeader from "./AppHeader.js";
+import * as AppHeader from "./AppHeader.js";
 import { BrowserRouter as Router, Route, IndexRoute } from 'react-router-dom';
 import BugView from './BugView';
 
-const BugList = () => (
-  <div>
-    {AppHeader()}
-    <BugListPanel></BugListPanel>
-  </div>
-);
+const BugList = () => {
+  document.title = AppHeader.AppTitle;
+  return (
+    <div>
+      {AppHeader.AppHeaderPanel()}
+      <BugListPanel></BugListPanel>
+    </div>
+  );
+};
 
 class App extends Component {
 
@@ -32,7 +35,7 @@ class App extends Component {
         <Router>
           <div>
             <Route exact path="/" component={BugList}/>
-            <Route path="/bug" component={BugView}/>
+            <Route path="/bug/:bugId" component={BugView}/>
           </div>
         </Router>
       </div>
