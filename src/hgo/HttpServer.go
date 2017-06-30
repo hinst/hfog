@@ -8,7 +8,7 @@ import (
 
 func StartHttpServer(address string) *http.Server {
 	var server = &(http.Server{Addr: address})
-	server.ListenAndServe()
+	go server.ListenAndServe()
 	return server
 }
 

@@ -8,7 +8,8 @@ import (
 
 type TWebApp struct {
 	WebUI  *TWebUI
-	Holder *sync.WaitGroup
+	DB     *TDBMan
+	Holder sync.WaitGroup
 }
 
 func (this *TWebApp) Create() *TWebApp {
@@ -17,7 +18,11 @@ func (this *TWebApp) Create() *TWebApp {
 
 func (this *TWebApp) Run() {
 	WriteLog("Starting...")
+	this.DB = (&TDBMan{}).Create()
+	this.DB.FilePath = hgo.AppDir + "/data/db-sh.bolt"
+	this.DB.Start()
 	this.WebUI = (&TWebUI{}).Create()
+	this.WebUI.DB = this.DB
 	this.WebUI.Start()
 	var server = hgo.StartHttpServer(":9000")
 	this.Holder.Add(1)
@@ -25,6 +30,7 @@ func (this *TWebApp) Run() {
 	this.Holder.Wait()
 	var stopServerHttpResult = hgo.StopHttpServer(server, 1*time.Second)
 	WriteLogResult(stopServerHttpResult)
+	this.DB.Stop()
 }
 
 func (this *TWebApp) ReceiveShutdownSignal() {
