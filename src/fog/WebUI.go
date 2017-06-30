@@ -19,6 +19,7 @@ func (this *TWebUI) Create() *TWebUI {
 
 func (this *TWebUI) Start() {
 	this.AddRequestHandler("/bugs", this.GetBugs)
+	this.AddRequestHandler("/getBug", this.GetBug)
 	this.InstallUiFileHandlers()
 }
 
@@ -69,5 +70,12 @@ func (this *TWebUI) InstallUiFileHandlers() {
 }
 
 func (this *TWebUI) GetBug(response http.ResponseWriter, request *http.Request) {
-
+	var bug = this.DB.LoadBugData(request.URL.Query().Get("id"))
+	if bug != nil {
+		var wBug = bug.ToBugDataWeb()
+		var data, marshalResult = json.Marshal(wBug)
+		AssertResult(marshalResult)
+		response.Header().Set("Content-Type", "application/json")
+		response.Write(data)
+	}
 }

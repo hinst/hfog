@@ -8,6 +8,7 @@ class BugView extends React.Component {
     constructor(props) {
         super(props);
         document.title = "Bug";
+        this.requestContent();
     }
 
     render() {
