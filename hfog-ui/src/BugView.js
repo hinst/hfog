@@ -11,6 +11,7 @@ class BugView extends React.Component {
         super(props);
         this.state = {
             title: "",
+            events: [],
         };
         document.title = "Bug";
         this.requestContent();
@@ -27,8 +28,27 @@ class BugView extends React.Component {
                 <button className="w3-btn w3-black">{this.props.match.params.bugId}</button>
                 <div style={{display: "inline-block", minWidth: "4px"}}/>
                 {this.state.title} 
+                <br/>
+                {this.renderEvents()}
             </div>
         );
+    }
+
+    renderEvents() {
+        const items = this.state.events.map(
+            (event, i) => {
+                return (
+                    <BugEventView 
+                        key={this.props.match.params.bugId + "-" + i}
+                        moment={event.Moment}
+                        person={event.Person}
+                        verb={event.Verb}
+                        text={event.Text}
+                        html={event.HTML}
+                    />
+                );
+            });
+        return items;
     }
 
     requestContent() {
@@ -36,9 +56,9 @@ class BugView extends React.Component {
     }
 
     receiveContent(data) {
-        console.log(data);
         this.setState({
             title: data.Title,
+            events: data.Events,
         });
     }
 
