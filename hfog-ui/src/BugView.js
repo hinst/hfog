@@ -13,7 +13,7 @@ class BugView extends React.Component {
             title: "",
             events: [],
         };
-        document.title = "Bug";
+        document.title = "FB-Bug " + this.props.match.params.bugId;
         this.requestContent();
     }
 

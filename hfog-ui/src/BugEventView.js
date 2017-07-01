@@ -23,7 +23,12 @@ class BugEventView extends React.PureComponent {
 
     getMomentString() {
         const date = new Date(this.props.moment);
-        return "" + date.getFullYear() + "." + (date.getMonth() + 1) + "." + date.getDay() + " " + date.getHours() + ":" + date.getMinutes();
+        const s = (s) => {
+            while (s.length < 2)
+                s = "0" + s;
+            return s;
+        };
+        return "" + date.getFullYear() + "." + s(date.getMonth() + 1) + "." + s(date.getDay()) + " " + s(date.getHours()) + ":" + s(date.getMinutes());
     }
 
     getVisibleText() {
@@ -32,8 +37,8 @@ class BugEventView extends React.PureComponent {
         text = text.map((item) => item.trim());
         let items = [];
         for (let i = 0; i < text.length; i++) {
-            items.push(<span key={""+i+"s"}>{text[i]}</span>);
-            items.push(<br key={""+i+"br"}/>);
+            items.push(<span key={"" + i + "s"}>{text[i]}</span>);
+            items.push(<br key={"" + i + "br"}/>);
         }
         return items;
     }
