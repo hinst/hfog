@@ -33,7 +33,11 @@ class BugListPanel extends React.Component {
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={ () => this.receiveSearchClick() }>Search</button>
 			</div>
-			<BugListView bugs={this.state.bugs} sortAscending={this.state.sortAscending}></BugListView>
+			<BugListView 
+				bugs={this.state.bugs} 
+				sortAscending={this.state.sortAscending}
+				itemClickReceiver={(bugId) => this.receiveItemClick(bugId)}
+			/>
 		</div>);
 	}
 
@@ -69,6 +73,10 @@ class BugListPanel extends React.Component {
 	receiveRefreshClick() {
 		this.setState({bugs: []});
 		this.requestBugs();
+	}
+
+	receiveItemClick(bugId) {
+		console.log(bugId);
 	}
 
 }

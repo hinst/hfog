@@ -6,7 +6,7 @@ class BugHeadItem extends React.PureComponent {
 		return (<div className="w3-panel">
 			<button 
 				className="w3-btn w3-black" 
-				onClick={()=>this.receiveClick}
+				onClick={()=>this.receiveClick()}
 			>
 				{this.props.number}
 			</button>
