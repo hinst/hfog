@@ -9,10 +9,10 @@ class BugListPanel extends React.Component {
 		super(props);
 		this.state = {
 			bugs: [],
-      		sortAscending: false,			
+      sortAscending: false,
 			searchPanelVisible: false,
 		}
-	    this.requestBugs();
+	  this.requestBugs();
 	}
 
 	render() {
@@ -53,18 +53,18 @@ class BugListPanel extends React.Component {
 		this.setState({searchPanelVisible: false});
 	}
 
-  requestBugs() {
-    Api.LoadBugList(data => this.receiveBugs(data));
-  }
+	requestBugs() {
+		Api.LoadBugList(data => this.receiveBugs(data));
+	}
 
-  receiveBugs(data) {
-    this.setState({bugs: data});
-  }
+	receiveBugs(data) {
+		this.setState({bugs: data});
+	}
 
-  receiveSearchAct(keywords) {
+	receiveSearchAct(keywords) {
 	this.setState({searchPanelVisible: false});
 	console.log(keywords);
-  }
+	}
 
 	receiveRefreshClick() {
 		this.setState({bugs: []});

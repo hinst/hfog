@@ -7,7 +7,14 @@ class BugListView extends React.PureComponent {
 		const bugs = this.getSortedBugs();
 		const bugHeadItems = bugs.map(
 			(bug) => {
-				return (<BugHeadItem key={bug.Number} number={bug.Number} title={bug.Title}></BugHeadItem>);
+				return (
+					<BugHeadItem 
+						key={bug.Number} 
+						number={bug.Number} 
+						title={bug.Title}
+						clickReceiver={this.props.itemClickReceiver}
+					/>
+				);
 			}
 		);
 		return (<div>{bugHeadItems}</div>);
