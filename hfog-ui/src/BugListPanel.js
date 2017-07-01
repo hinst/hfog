@@ -62,8 +62,8 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveSearchAct(keywords) {
-	this.setState({searchPanelVisible: false});
-	console.log(keywords);
+		this.setState({searchPanelVisible: false});
+		console.log(keywords);
 	}
 
 	receiveRefreshClick() {
