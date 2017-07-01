@@ -10,6 +10,7 @@ class BugHeadItem extends React.PureComponent {
 			>
 				{this.props.number}
 			</button>
+			<div style={{display: "inline-block", minWidth: "4px"}}/>
 			{this.props.title}
 		</div>)
 	}
