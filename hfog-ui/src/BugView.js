@@ -24,8 +24,7 @@ class BugView extends React.Component {
                 <div style={{display: "inline-block", minWidth: "4px"}}/>
                 <button className="w3-btn w3-black">{this.props.match.params.bugId}</button>
                 <div style={{display: "inline-block", minWidth: "4px"}}/>
-                <hr/>
-                <div class="w3-container">{this.state.title}</div>
+                {this.state.title} 
             </div>
         );
     }
@@ -35,6 +34,7 @@ class BugView extends React.Component {
     }
 
     receiveContent(data) {
+        console.log(data);
         this.setState({
             title: data.Title,
         });

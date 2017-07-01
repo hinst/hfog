@@ -77,5 +77,7 @@ func (this *TWebUI) GetBug(response http.ResponseWriter, request *http.Request) 
 		AssertResult(marshalResult)
 		response.Header().Set("Content-Type", "application/json")
 		response.Write(data)
+	} else {
+		response.Write([]byte("No such bug"))
 	}
 }
