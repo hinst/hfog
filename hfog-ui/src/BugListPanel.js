@@ -2,6 +2,7 @@ import React from 'react';
 import * as Api from "./Api";
 import BugSearchPanel from "./BugSearchPanel";
 import BugListView from "./BugListView";
+import AppURL from './AppURL';
 
 class BugListPanel extends React.Component {
 
@@ -76,7 +77,7 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveItemClick(bugId) {
-		console.log(bugId);
+		window.open(AppURL + "/bug/" + bugId);
 	}
 
 }

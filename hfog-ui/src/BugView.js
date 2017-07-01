@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import * as AppHeader from "./AppHeader.js";
 import * as Api from './Api';
+import AppURL from './AppURL';
 
 class BugView extends React.Component {
 
@@ -18,7 +19,7 @@ class BugView extends React.Component {
         return (
             <div>
                 {AppHeader.AppHeaderPanel()}
-                <Link className="w3-btn w3-black" to="/"> ← Bug list</Link>
+                <Link className="w3-btn w3-black" to={AppURL + "/"}> ← Bug list</Link>
                 <div style={{display: "inline-block", minWidth: "8px"}}/>
                 Bug 
                 <div style={{display: "inline-block", minWidth: "4px"}}/>

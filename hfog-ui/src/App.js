@@ -5,6 +5,7 @@ import "./App.css";
 import * as AppHeader from "./AppHeader.js";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import BugView from './BugView';
+import AppURL from './AppURL';
 
 const BugList = () => {
   document.title = AppHeader.AppTitle;
@@ -34,8 +35,8 @@ class App extends Component {
       <div className="w3-container">
         <Router>
           <div>
-            <Route exact path="/" component={BugList}/>
-            <Route path="/bug/:bugId" component={BugView}/>
+            <Route exact path={AppURL + "/"} component={BugList}/>
+            <Route path={AppURL + "/bug/:bugId"} component={BugView}/>
           </div>
         </Router>
       </div>
