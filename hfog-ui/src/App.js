@@ -6,7 +6,6 @@ import * as AppHeader from "./AppHeader.js";
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import BugView from './BugView';
 import AppURL from './AppURL';
-import * as AccessKey from './AccessKey';
 
 const BugList = () => {
   document.title = AppHeader.AppTitle;
@@ -24,7 +23,6 @@ class App extends Component {
     super(props);
     this.state = {
     };
-    console.log(AccessKey.GetURL());
   }
 
   sampleBugs = [

@@ -16,6 +16,7 @@ class BugListPanel extends React.Component {
 			searchPanelVisible: false,
 			filterString: "",
 			pageNumber: 0,
+			pageSize: 100,
 		}
 	  this.requestBugs();
 	}
@@ -38,8 +39,9 @@ class BugListPanel extends React.Component {
 				: ""
 			}
 			<div className="w3-panel">
-				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>◄</button>
-				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>►</button>
+				<button className="w3-btn w3-black" onClick={() => this.changePage(-1)}>◄</button>
+				<span className="w3-button w3-black" onClick={ () => this.setState({pageNumber: 0}) }>{this.state.pageNumber + 1}</span>
+				<button className="w3-btn w3-black" onClick={() => this.changePage(1)}>►</button>
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>{this.state.sortAscending ? "▲" : "▼"}</button>
 				<span style={{marginLeft: "4px"}}></span>
@@ -63,7 +65,7 @@ class BugListPanel extends React.Component {
 					: ""}
 			</div>
 			<BugListView 
-				bugs={this.state.sortedBugs} 
+				bugs={this.getVisibleBugs()} 
 				sortAscending={this.state.sortAscending}
 				itemClickReceiver={(bugId) => this.receiveItemClick(bugId)}
 			/>
@@ -91,7 +93,6 @@ class BugListPanel extends React.Component {
 		if (this.state.filterString.length === 0)
 			Api.LoadBugList(data => this.receiveBugs(data));
 		else {
-			console.log(this.state.filterString);
 			Api.LoadBugListFiltered(this.state.filterString, data => this.receiveBugs(data));
 		}
 	}
@@ -122,10 +123,13 @@ class BugListPanel extends React.Component {
 	changePage(delta) {
 		let pageNumber = this.state.pageNumber;
 		pageNumber = pageNumber + delta;
+		if (this.checkPageNumberValid(pageNumber)) {
+			this.setState({pageNumber: pageNumber});
+		}
 	}
 
 	checkPageNumberValid(pageNumber) {
-
+		return (0 <= pageNumber) && (pageNumber * this.state.pageSize < this.state.sortedBugs.length);
 	}
 
 	getSortedBugs() {
@@ -147,7 +151,13 @@ class BugListPanel extends React.Component {
 	}
 
 	sortBugs() {
-		this.setState({sortedBugs: this.getSortedBugs()});
+		this.setState({pageNumber: 0, sortedBugs: this.getSortedBugs()});
+	}
+
+	getVisibleBugs() {
+		let start = this.state.pageNumber * this.state.pageSize;
+		let end = start + this.state.pageSize;
+		return this.state.sortedBugs.slice(start, end);
 	}
 
 }
