@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
-target="caddy"
+target="fog_app_viewer"
 path=$(realpath $target)
 echo "$target control: $1"
 

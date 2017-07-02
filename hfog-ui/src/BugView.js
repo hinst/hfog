@@ -4,6 +4,7 @@ import * as AppHeader from "./AppHeader";
 import * as Api from './Api';
 import AppURL from './AppURL';
 import BugEventView from './BugEventView';
+import * as AccessKey from './AccessKey';
 
 class BugView extends React.Component {
 
@@ -21,7 +22,7 @@ class BugView extends React.Component {
         return (
             <div>
                 {AppHeader.AppHeaderPanel()}
-                <Link className="w3-btn w3-black" to={AppURL + "/"}> ← Bug list</Link>
+                <Link className="w3-btn w3-black" to={AppURL + "?" + AccessKey.GetURL()}> ← Bug list</Link>
                 <div style={{display: "inline-block", minWidth: "8px"}}/>
                 Bug 
                 <div style={{display: "inline-block", minWidth: "4px"}}/>

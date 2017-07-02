@@ -54,7 +54,8 @@ func (this *TWebUI) AddRequestHandler(url string, f func(response http.ResponseW
 			response.Header().Set("Access-Control-Allow-Origin", "*")
 			f(response, request)
 		} else {
-			response.Write([]byte("ERROR: AccessKey mismatch"))
+			response.Write([]byte("ERROR: AccessKey mismatch " + this.AccessKey))
+			WriteLog("AccessKey mismatch " + this.AccessKey + " " + request.URL.Query().Get("AccessKey"))
 		}
 	}
 	http.HandleFunc(this.URL+url, wrappedFunc)

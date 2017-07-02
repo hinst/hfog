@@ -3,6 +3,7 @@ import * as Api from "./Api";
 import BugSearchPanel from "./BugSearchPanel";
 import BugListView from "./BugListView";
 import AppURL from './AppURL';
+import * as AccessKey from './AccessKey';
 
 class BugListPanel extends React.Component {
 
@@ -109,7 +110,7 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveItemClick(bugId) {
-		window.open(AppURL + "/bug/" + bugId);
+		window.open(AppURL + "/bug/" + bugId + "?" + AccessKey.GetURL());
 	}
 
 }

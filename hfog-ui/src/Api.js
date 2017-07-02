@@ -1,7 +1,9 @@
 import ApiURL from "./ApiURL";
+import * as AccessKey from './AccessKey';
 
 function LoadJson(url, receiver) {
-    fetch(ApiURL + url).then(response => response.json().then(data => receiver(data)));
+    var fullURL = ApiURL + url + "&" + AccessKey.GetURL();
+    fetch(fullURL).then(response => response.json().then(data => receiver(data)));
 }
 
 export function LoadBugList(receiver) {
