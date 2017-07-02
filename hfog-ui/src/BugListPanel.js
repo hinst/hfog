@@ -62,7 +62,7 @@ class BugListPanel extends React.Component {
 	}
 
 	requestBugs() {
-		if (this.state.filterString.length == 0)
+		if (this.state.filterString.length === 0)
 			Api.LoadBugList(data => this.receiveBugs(data));
 		else {
 			console.log(this.state.filterString);
@@ -75,11 +75,12 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveSearchAct(keywords) {
-		this.setState({
-			searchPanelVisible: false,
-			filterString: keywords,
-		});
-		this.requestBugs();
+		this.setState(
+			{
+				searchPanelVisible: false,
+				filterString: keywords,
+			},
+			() => this.requestBugs());
 	}
 
 	receiveRefreshClick() {
