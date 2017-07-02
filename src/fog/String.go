@@ -26,3 +26,12 @@ func StringContainsAnyFromArray(text string, words []string) (result bool) {
 	}
 	return
 }
+
+func CountStringContainsFromArray(text string, words []string) (result int) {
+	for _, word := range words {
+		if strings.Contains(text, word) {
+			result++
+		}
+	}
+	return
+}

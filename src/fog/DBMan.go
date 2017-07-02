@@ -71,8 +71,8 @@ func (this *TDBMan) GetTitles() (result map[int]string) {
 	return
 }
 
-func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]string) {
-	result = make(map[int]string)
+func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]TRankedTitle) {
+	result = make(map[int]TRankedTitle)
 	var filterWords = strings.Split(filterString, " ")
 	this.db.View(func(tx *bolt.Tx) error {
 		var bucket = DBManGetTitlesBucket(tx)
@@ -80,8 +80,9 @@ func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]strin
 		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
 			var stringKey = string(key)
 			var intKey = StrToInt0(stringKey)
-			if this.CheckBugFits(tx, stringKey, filterWords) {
-				result[intKey] = string(value)
+			var rank = this.CheckBugFits(tx, stringKey, filterWords)
+			if rank > 0 {
+				result[intKey] = TRankedTitle{string(value), rank}
 			}
 		}
 		return nil
@@ -89,10 +90,10 @@ func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]strin
 	return
 }
 
-func (this *TDBMan) CheckBugFits(tx *bolt.Tx, bugId string, filterWords []string) bool {
+func (this *TDBMan) CheckBugFits(tx *bolt.Tx, bugId string, filterWords []string) int {
 	var title = string(DBManGetTitlesBucket(tx).Get([]byte(bugId)))
 	//var bug = this.ReadBugData(tx, bugId)
-	return StringContainsAnyFromArray(title, filterWords)
+	return CountStringContainsFromArray(title, filterWords)
 }
 
 func (this *TDBMan) WriteToFile(filePath string) {

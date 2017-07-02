@@ -38,7 +38,7 @@ func (this *TWebUI) GetBugs(response http.ResponseWriter, request *http.Request)
 func (this *TWebUI) GetBugsFiltered(response http.ResponseWriter, request *http.Request) {
 	var filterString = request.URL.Query().Get("filter")
 	var titles = this.DB.GetTitlesFiltered(filterString)
-	var bugs = TBugHeaderWebStruct{}.GetFromMap(titles)
+	var bugs = TBugHeaderWebStruct{}.GetFromRankedMap(titles)
 	var data, marshalResult = json.Marshal(&bugs)
 	WriteLogResult(marshalResult)
 	if marshalResult == nil {
