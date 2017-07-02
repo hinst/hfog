@@ -5,10 +5,14 @@ function LoadJson(url, receiver) {
 }
 
 export function LoadBugList(receiver) {
-    LoadJson("/bugs", receiver);
+    LoadJson("/bugs?s", receiver);
 }
 
 export function LoadBug(bugId, receiver) {
     LoadJson("/getBug?id=" + encodeURIComponent(bugId), receiver);
+}
+
+export function LoadBugListFiltered(filterString, receiver) {
+    LoadJson("/getBugsFiltered?filter=" + encodeURIComponent(filterString), receiver);
 }
 

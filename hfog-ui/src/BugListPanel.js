@@ -10,8 +10,9 @@ class BugListPanel extends React.Component {
 		super(props);
 		this.state = {
 			bugs: [],
-      sortAscending: false,
+      		sortAscending: false,
 			searchPanelVisible: false,
+			filterString: "",
 		}
 	  this.requestBugs();
 	}
@@ -33,6 +34,8 @@ class BugListPanel extends React.Component {
 				<button className="w3-btn w3-black" onClick={() => this.receiveRefreshClick()}>Refresh</button>
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={ () => this.receiveSearchClick() }>Search</button>
+				<span style={{marginLeft: "4px"}}></span>
+				Showing {this.state.bugs.length} items
 			</div>
 			<BugListView 
 				bugs={this.state.bugs} 
@@ -51,7 +54,7 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveSearchClick() {
-		this.setState({searchPanelVisible: ! this.state.searchPanelVisible});
+		this.setState({searchPanelVisible: true});
 	}
 
 	receiveSearchPanelClickBack() {
@@ -59,7 +62,12 @@ class BugListPanel extends React.Component {
 	}
 
 	requestBugs() {
-		Api.LoadBugList(data => this.receiveBugs(data));
+		if (this.state.filterString.length == 0)
+			Api.LoadBugList(data => this.receiveBugs(data));
+		else {
+			console.log(this.state.filterString);
+			Api.LoadBugListFiltered(this.state.filterString, data => this.receiveBugs(data));
+		}
 	}
 
 	receiveBugs(data) {
@@ -67,8 +75,11 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveSearchAct(keywords) {
-		this.setState({searchPanelVisible: false});
-		console.log(keywords);
+		this.setState({
+			searchPanelVisible: false,
+			filterString: keywords,
+		});
+		this.requestBugs();
 	}
 
 	receiveRefreshClick() {
