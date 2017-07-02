@@ -21,13 +21,19 @@ class BugListView extends React.PureComponent {
 	}
 
 	getSortedBugs() {
+		const sortAscending = this.props.sortAscending;
 		const bugs = this.props.bugs.slice();
 		bugs.sort((a, b) => {
-			var diff = a.Number - b.Number;
-			if ( ! this.props.sortAscending) {
-				diff = -diff;
+			var rankDiff = a.Rank - b.Rank;
+			if (rankDiff === 0) {
+				var numberDiff = a.Number - b.Number;
+				if ( !sortAscending ) {
+					numberDiff = -numberDiff;
+				}
+				return numberDiff;
+			} else {
+				return -rankDiff;
 			}
-			return diff;
 		});
 		return bugs;
 	}

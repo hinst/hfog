@@ -6,7 +6,7 @@ class BugSearchPanel extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			keywords: "",
+			keywords: this.props.keywords,
 		};
 	}
 
@@ -29,6 +29,7 @@ class BugSearchPanel extends React.Component {
 							);
 						}
 					}
+					value={this.state.keywords}
 					onKeyPress={
 						(event) => {
 							if (event.key === 'Enter') {

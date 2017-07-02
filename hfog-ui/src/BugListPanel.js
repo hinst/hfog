@@ -19,15 +19,21 @@ class BugListPanel extends React.Component {
 
 	render() {
 		return (<div>
-			<div className="overlay" style={{ zIndex: 1, display: this.getSearchPanelDisplay() }}>
-				<div className="overlay-content">
-					<BugSearchPanel 
-						backClickReceiver={ () => this.receiveSearchPanelClickBack() }
-						searchActReceiver={ (keywords) => this.receiveSearchAct(keywords) }
-					>
-					</BugSearchPanel>
-				</div>
-			</div>
+			{this.state.searchPanelVisible
+				?(
+					<div className="overlay" style={{ zIndex: 1, display: this.getSearchPanelDisplay() }}>
+						<div className="overlay-content">
+							<BugSearchPanel 
+								keywords={this.state.filterString}
+								backClickReceiver={ () => this.receiveSearchPanelClickBack() }
+								searchActReceiver={ (keywords) => this.receiveSearchAct(keywords) }
+							>
+							</BugSearchPanel>
+						</div>
+					</div>
+				)
+				: ""
+			}
 			<div className="w3-panel">
 				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>{this.state.sortAscending ? "▲" : "▼"}</button>
 				<span style={{marginLeft: "4px"}}></span>

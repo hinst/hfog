@@ -27,9 +27,11 @@ func StringContainsAnyFromArray(text string, words []string) (result bool) {
 	return
 }
 
+// Case insensitive
 func CountStringContainsFromArray(text string, words []string) (result int) {
+	text = strings.ToUpper(text)
 	for _, word := range words {
-		if strings.Contains(text, word) {
+		if strings.Contains(text, strings.ToUpper(word)) {
 			result++
 		}
 	}
