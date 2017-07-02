@@ -22,7 +22,7 @@ class BugView extends React.Component {
         return (
             <div>
                 {AppHeader.AppHeaderPanel()}
-                <Link className="w3-btn w3-black" to={AppURL + "?" + AccessKey.GetURL()}> ← Bug list</Link>
+                <Link className="w3-btn w3-black" to={AppURL + "/?" + AccessKey.GetURL()}> ← Bug list</Link>
                 <div style={{display: "inline-block", minWidth: "8px"}}/>
                 Bug 
                 <div style={{display: "inline-block", minWidth: "4px"}}/>
