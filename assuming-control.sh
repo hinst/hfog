@@ -7,6 +7,7 @@ echo "$target control: $1"
 
 if [ "$1" = "start" ]
 then
+	export GOGC=10
 	nohup $path 2>>error-log.txt 1>>output-log.txt &
 fi
 
