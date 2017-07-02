@@ -15,7 +15,7 @@ func (this *TDBGenApp) Run() {
 	this.DB = (&TDBMan{}).Create()
 	this.DB.Start()
 	//this.LoadBugs()
-	this.DB.WriteToFile(hgo.AppDir + "/data/db-sh.bolt")
+	this.DB.WriteToFile("db-b.bolt")
 	this.DB.Stop()
 }
 
@@ -39,8 +39,15 @@ func (this *TDBGenApp) LoadBugs() {
 		WriteLog("Writing item " + IntToStr(itemIndex))
 		var data = this.ReadBugData(item.IxBug)
 		if data != nil && len(data.Cases.Cases) > 0 {
+			this.ClearEventsHtml(&data.Cases.Cases[0])
 			this.DB.WriteBugData(&data.Cases.Cases[0])
 		}
 	}
 	WriteLog("Loaded bugs: " + IntToStr(len(this.Bugs)))
+}
+
+func (this *TDBGenApp) ClearEventsHtml(data *TBugCaseData) {
+	for i := range data.Events.Events {
+		data.Events.Events[i].SHTML.Text = ""
+	}
 }

@@ -4,6 +4,8 @@ import (
 	"hgo"
 	"os"
 
+	"strings"
+
 	"github.com/boltdb/bolt"
 )
 
@@ -67,6 +69,30 @@ func (this *TDBMan) GetTitles() (result map[int]string) {
 		return nil
 	})
 	return
+}
+
+func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]string) {
+	result = make(map[int]string)
+	var filterWords = strings.Split(filterString, " ")
+	this.db.View(func(tx *bolt.Tx) error {
+		var bucket = DBManGetTitlesBucket(tx)
+		var cursor = bucket.Cursor()
+		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
+			var stringKey = string(key)
+			var intKey = StrToInt0(stringKey)
+			if this.CheckBugFits(tx, stringKey, filterWords) {
+				result[intKey] = string(value)
+			}
+		}
+		return nil
+	})
+	return
+}
+
+func (this *TDBMan) CheckBugFits(tx *bolt.Tx, bugId string, filterWords []string) bool {
+	var title = string(DBManGetTitlesBucket(tx).Get([]byte(bugId)))
+	//var bug = this.ReadBugData(tx, bugId)
+	return StringContainsAnyFromArray(title, filterWords)
 }
 
 func (this *TDBMan) WriteToFile(filePath string) {

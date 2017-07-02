@@ -20,19 +20,25 @@ func (this *TWebUI) Create() *TWebUI {
 func (this *TWebUI) Start() {
 	this.AddRequestHandler("/bugs", this.GetBugs)
 	this.AddRequestHandler("/getBug", this.GetBug)
+	this.AddRequestHandler("/getBugsFiltered", this.GetBugsFiltered)
 	this.InstallUiFileHandlers()
 }
 
 func (this *TWebUI) GetBugs(response http.ResponseWriter, request *http.Request) {
-	var bugs = make([]TBugHeaderWebStruct, 0)
 	var titles = this.DB.GetTitles()
-	for key, value := range titles {
-		bugs = append(bugs,
-			TBugHeaderWebStruct{
-				Number: key,
-				Title:  value,
-			})
+	var bugs = TBugHeaderWebStruct{}.GetFromMap(titles)
+	var data, marshalResult = json.Marshal(&bugs)
+	WriteLogResult(marshalResult)
+	if marshalResult == nil {
+		response.Header().Set("Content-Type", "application/json")
+		response.Write(data)
 	}
+}
+
+func (this *TWebUI) GetBugsFiltered(response http.ResponseWriter, request *http.Request) {
+	var filterString = request.URL.Query().Get("filter")
+	var titles = this.DB.GetTitlesFiltered(filterString)
+	var bugs = TBugHeaderWebStruct{}.GetFromMap(titles)
 	var data, marshalResult = json.Marshal(&bugs)
 	WriteLogResult(marshalResult)
 	if marshalResult == nil {
