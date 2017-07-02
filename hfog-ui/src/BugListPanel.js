@@ -42,6 +42,19 @@ class BugListPanel extends React.Component {
 				<button className="w3-btn w3-black" onClick={ () => this.receiveSearchClick() }>Search</button>
 				<span style={{marginLeft: "4px"}}></span>
 				Showing {this.state.bugs.length} items
+				<span style={{marginLeft: "4px"}}></span>
+				{this.state.filterString.length > 0
+					? (
+						<button 
+							className="w3-btn w3-black" 
+							onClick={() => {
+								this.setState({filterString: "", bugs: []}, () => this.requestBugs());
+							}}
+						>
+						Clear filter
+						</button>
+					)
+					: ""}
 			</div>
 			<BugListView 
 				bugs={this.state.bugs} 
@@ -85,6 +98,7 @@ class BugListPanel extends React.Component {
 			{
 				searchPanelVisible: false,
 				filterString: keywords,
+				bugs: [],
 			},
 			() => this.requestBugs());
 	}
