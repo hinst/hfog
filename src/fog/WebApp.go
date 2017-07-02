@@ -1,7 +1,9 @@
 package fog
 
 import (
+	"encoding/json"
 	"hgo"
+	"io/ioutil"
 	"sync"
 	"time"
 )
@@ -10,15 +12,17 @@ type TWebApp struct {
 	WebUI  *TWebUI
 	DB     *TDBMan
 	Holder sync.WaitGroup
+	Config TWebAppConfig
 }
 
 func (this *TWebApp) Create() *TWebApp {
+	println(hgo.MakeRandomString(10))
 	return this
 }
 
 func (this *TWebApp) Run() {
+	this.LoadConfig()
 	this.DB = (&TDBMan{}).Create()
-	this.DB.FilePath = hgo.AppDir + "/data/db-sh.bolt"
 	this.DB.Start()
 	this.WebUI = (&TWebUI{}).Create()
 	this.WebUI.DB = this.DB
@@ -34,4 +38,11 @@ func (this *TWebApp) Run() {
 
 func (this *TWebApp) ReceiveShutdownSignal() {
 	this.Holder.Done()
+}
+
+func (this *TWebApp) LoadConfig() {
+	var data, readFileResult = ioutil.ReadFile(hgo.AppDir + "/fog_app_viewer.json")
+	AssertResult(readFileResult)
+	var unmarshalResult = json.Unmarshal(data, &this.Config)
+	AssertResult(unmarshalResult)
 }

@@ -5,3 +5,4 @@ data/
 fog_app_viewer.exe
 bin/bolt.exe
 fog_app_dbgen.exe
+fog_app_viewer.json
