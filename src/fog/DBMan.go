@@ -93,7 +93,7 @@ func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]TRank
 func (this *TDBMan) CheckBugFits(tx *bolt.Tx, bugId string, filterWords []string) int {
 	var title = string(DBManGetTitlesBucket(tx).Get([]byte(bugId)))
 	//var bug = this.ReadBugData(tx, bugId)
-	return CountStringContainsFromArray(title, filterWords)
+	return CountStringContainsFromArray(title, filterWords) + CountStringContainsFromArray(bugId, filterWords)
 }
 
 func (this *TDBMan) WriteToFile(filePath string) {
