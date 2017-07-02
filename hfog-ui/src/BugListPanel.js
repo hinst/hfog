@@ -40,7 +40,7 @@ class BugListPanel extends React.Component {
 			}
 			<div className="w3-panel">
 				<button className="w3-btn w3-black" onClick={() => this.changePage(-1)}>◄</button>
-				<span className="w3-button w3-black" onClick={ () => this.setState({pageNumber: 0}) }>{this.state.pageNumber + 1}</span>
+				<span className="w3-button w3-black" onClick={() => this.receivePageNumberClick()}>{this.state.pageNumber + 1}</span>
 				<button className="w3-btn w3-black" onClick={() => this.changePage(1)}>►</button>
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>{this.state.sortAscending ? "▲" : "▼"}</button>
@@ -158,6 +158,17 @@ class BugListPanel extends React.Component {
 		let start = this.state.pageNumber * this.state.pageSize;
 		let end = start + this.state.pageSize;
 		return this.state.sortedBugs.slice(start, end);
+	}
+
+	receivePageNumberClick() {
+		let pageNumber = this.state.pageNumber;
+		if (pageNumber > 0) {
+			this.setState({pageNumber: 0});
+		} else {
+			while (this.checkPageNumberValid(pageNumber + 1))
+				pageNumber++;
+			this.setState({pageNumber: pageNumber});
+		}
 	}
 
 }
