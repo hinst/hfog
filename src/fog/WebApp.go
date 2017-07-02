@@ -16,7 +16,10 @@ type TWebApp struct {
 }
 
 func (this *TWebApp) Create() *TWebApp {
-	println(hgo.MakeRandomString(10))
+	if false {
+		println(hgo.MakeRandomString(10))
+	}
+	this.Config.Address = ":9000" // default
 	return this
 }
 
@@ -26,8 +29,9 @@ func (this *TWebApp) Run() {
 	this.DB.Start()
 	this.WebUI = (&TWebUI{}).Create()
 	this.WebUI.DB = this.DB
+	this.WebUI.AccessKey = this.Config.AccessKey
 	this.WebUI.Start()
-	var server = hgo.StartHttpServer(":9000")
+	var server = hgo.StartHttpServer(this.Config.Address)
 	this.Holder.Add(1)
 	hgo.InstallShutdownReceiver(this.ReceiveShutdownSignal)
 	this.Holder.Wait()
