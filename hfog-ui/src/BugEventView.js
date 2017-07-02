@@ -23,10 +23,11 @@ class BugEventView extends React.PureComponent {
 
     getMomentString() {
         const date = new Date(this.props.moment);
-        const s = (s) => {
-            while (s.length < 2)
-                s = "0" + s;
-            return s;
+        const s = (text) => {
+            text = "" + text;
+            while (text.length < 2)
+                text = "0" + text;
+            return text;
         };
         return "" + date.getFullYear() + "." + s(date.getMonth() + 1) + "." + s(date.getDay()) + " " + s(date.getHours()) + ":" + s(date.getMinutes());
     }

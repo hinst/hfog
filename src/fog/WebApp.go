@@ -16,7 +16,7 @@ type TWebApp struct {
 }
 
 func (this *TWebApp) Create() *TWebApp {
-	if false {
+	if true {
 		println(hgo.MakeRandomString(10))
 	}
 	this.Config.Address = ":9000" // default
