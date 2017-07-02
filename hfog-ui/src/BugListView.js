@@ -4,7 +4,7 @@ import BugHeadItem from "./BugHeadItem";
 class BugListView extends React.PureComponent {
 
 	render() {
-		const bugs = this.getSortedBugs();
+		const bugs = this.props.bugs;
 		const bugHeadItems = bugs.map(
 			(bug) => {
 				return (

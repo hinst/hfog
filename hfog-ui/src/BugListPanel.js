@@ -11,9 +11,11 @@ class BugListPanel extends React.Component {
 		super(props);
 		this.state = {
 			bugs: [],
+			sortedBugs: [],
       		sortAscending: false,
 			searchPanelVisible: false,
 			filterString: "",
+			pageNumber: 0,
 		}
 	  this.requestBugs();
 	}
@@ -36,6 +38,9 @@ class BugListPanel extends React.Component {
 				: ""
 			}
 			<div className="w3-panel">
+				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>◄</button>
+				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>►</button>
+				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={() => this.changeSortDirection()}>{this.state.sortAscending ? "▲" : "▼"}</button>
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={() => this.receiveRefreshClick()}>Refresh</button>
@@ -58,7 +63,7 @@ class BugListPanel extends React.Component {
 					: ""}
 			</div>
 			<BugListView 
-				bugs={this.state.bugs} 
+				bugs={this.state.sortedBugs} 
 				sortAscending={this.state.sortAscending}
 				itemClickReceiver={(bugId) => this.receiveItemClick(bugId)}
 			/>
@@ -70,7 +75,8 @@ class BugListPanel extends React.Component {
 	}
 
 	changeSortDirection() {
-		this.setState({sortAscending: ! this.state.sortAscending});
+		this.setState({sortAscending: ! this.state.sortAscending},
+			() => this.sortBugs());
 	}
 
 	receiveSearchClick() {
@@ -91,7 +97,7 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveBugs(data) {
-		this.setState({bugs: data});
+		this.setState({bugs: data}, () => this.sortBugs());
 	}
 
 	receiveSearchAct(keywords) {
@@ -111,6 +117,37 @@ class BugListPanel extends React.Component {
 
 	receiveItemClick(bugId) {
 		window.open(AppURL + "/bug/" + bugId + "?" + AccessKey.GetURL());
+	}
+
+	changePage(delta) {
+		let pageNumber = this.state.pageNumber;
+		pageNumber = pageNumber + delta;
+	}
+
+	checkPageNumberValid(pageNumber) {
+
+	}
+
+	getSortedBugs() {
+		const sortAscending = this.state.sortAscending;
+		const bugs = this.state.bugs.slice();
+		bugs.sort((a, b) => {
+			var rankDiff = a.Rank - b.Rank;
+			if (rankDiff === 0) {
+				var numberDiff = a.Number - b.Number;
+				if ( !sortAscending ) {
+					numberDiff = -numberDiff;
+				}
+				return numberDiff;
+			} else {
+				return -rankDiff;
+			}
+		});
+		return bugs;
+	}
+
+	sortBugs() {
+		this.setState({sortedBugs: this.getSortedBugs()});
 	}
 
 }
