@@ -16,8 +16,9 @@ import (
 const FogApiUrl = "/api.asp"
 
 type TApp struct {
-	Config *TConfig
-	Active int32
+	Config              *TConfig
+	Active              int32
+	LoadBugsModeEnabled bool
 }
 
 func (this *TApp) Create() *TApp {
@@ -28,6 +29,12 @@ func (this *TApp) Create() *TApp {
 func (this *TApp) Run() {
 	this.Prepare()
 	this.ReadConfig()
+	if this.LoadBugsModeEnabled {
+		this.RunLoadBugsMode()
+	}
+}
+
+func (this *TApp) RunLoadBugsMode() {
 	var bugs = this.ReadBugs()
 	var remainingBugs = this.RemoveExistingBugs(bugs)
 	WriteLog("Need bugs: " + strconv.Itoa(len(remainingBugs.Cases.Cases)) + " of " + strconv.Itoa(len(bugs.Cases.Cases)))
