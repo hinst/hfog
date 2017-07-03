@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"sync/atomic"
 	"time"
 )
@@ -16,9 +17,11 @@ import (
 const FogApiUrl = "/api.asp"
 
 type TApp struct {
-	Config              *TConfig
-	Active              int32
-	LoadBugsModeEnabled bool
+	Config *TConfig
+	Active int32
+
+	LoadBugsModeEnabled    bool
+	AttachmentsModeEnabled bool
 }
 
 func (this *TApp) Create() *TApp {
@@ -31,6 +34,9 @@ func (this *TApp) Run() {
 	this.ReadConfig()
 	if this.LoadBugsModeEnabled {
 		this.RunLoadBugsMode()
+	}
+	if this.AttachmentsModeEnabled {
+		this.RunAttachmentsMode()
 	}
 }
 
@@ -86,7 +92,7 @@ func (this *TApp) GetURL() string {
 }
 
 func (this *TApp) GetResponse(url string) *http.Response {
-	if false {
+	if true {
 		WriteLog("Get " + url)
 	}
 	var response, responseResult = http.Get(url)
@@ -98,6 +104,7 @@ func (this *TApp) Get(url string) []byte {
 	var resp = this.GetResponse(url)
 	var data, readResult = ioutil.ReadAll(resp.Body)
 	AssertResult(readResult)
+	WriteLog(IntToStr(len(data)))
 	return data
 }
 
@@ -159,6 +166,12 @@ func (this *TApp) LoadBug(bug *TBugListCase) []byte {
 	return this.Get(url)
 }
 
+func (this *TApp) LoadAttachment(aurl string) []byte {
+	aurl = this.Config.RootURL + "/" + strings.Replace(aurl, "&amp;", "&", -1) +
+		"&token=" + url.QueryEscape(this.Config.Token)
+	return this.Get(aurl)
+}
+
 func (this *TApp) CheckActive() bool {
 	return atomic.LoadInt32(&this.Active) > 0
 }
@@ -176,4 +189,45 @@ func (this *TApp) Prepare() {
 		func() {
 			this.SetActive(false)
 		})
+}
+
+func (this *TApp) RunAttachmentsMode() {
+	var bugListData = ReadBugsFromFile(hgo.AppDir + "/data/bugs.xml")
+	var countOfAttachments = 0
+	var mustBreak = false
+	for _, item := range bugListData.Cases.Cases {
+		if mustBreak {
+			break
+		}
+		var data = this.ReadBugData(item.IxBug)
+		for _, event := range data.Cases.Cases[0].Events.Events {
+			for _, attachment := range event.RGAttachments.Attachments {
+				if strings.HasSuffix(attachment.SFileName.Text, ".doc") || strings.HasSuffix(attachment.SFileName.Text, ".docx") {
+					WriteLog(IntToStr(countOfAttachments) + " " + attachment.SFileName.Text + " " + attachment.SURL.Text)
+					countOfAttachments++
+					var dataFilePath = "data/attachments/" + item.IxBug + "-a-" + attachment.SFileName.Text
+					if false == hgo.CheckFileExists(dataFilePath) {
+						var data = this.LoadAttachment(attachment.SURL.Text)
+						var writeFileResult = ioutil.WriteFile(dataFilePath, data, os.ModePerm)
+						AssertResult(writeFileResult)
+						mustBreak = true
+					}
+				}
+			}
+		}
+	}
+}
+
+func (this *TApp) ReadBugData(id string) (result *TBugData) {
+	var data, readFileResult = ioutil.ReadFile(hgo.AppDir + "/data/" + id + ".xml")
+	WriteLogResult(readFileResult)
+	if readFileResult == nil {
+		result = &TBugData{}
+		var unmarshalResult = xml.Unmarshal(data, result)
+		WriteLogResult(unmarshalResult)
+		if nil != unmarshalResult {
+			result = nil
+		}
+	}
+	return
 }

@@ -31,6 +31,17 @@ type TBugCaseEventData struct {
 	SPerson        TCDATA `xml:"sPerson"`
 	S              TCDATA `xml:"s"`
 	SHTML          TCDATA `xml:"sHtml"`
+
+	RGAttachments TRGAttachments `xml:"rgAttachments"`
+}
+
+type TRGAttachments struct {
+	Attachments []TAttachment `xml:"attachment"`
+}
+
+type TAttachment struct {
+	SFileName TCDATA `xml:"sFileName"`
+	SURL      TCDATA `xml:"sURL"`
 }
 
 func (this *TBugCaseEventData) ToDBStruct() TDBFlatStructArray {
