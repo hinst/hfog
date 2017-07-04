@@ -26,3 +26,5 @@ func GetDBManKey(ids []string) (result []byte) {
 	result = []byte(text)
 	return
 }
+
+var DBManAttachmentsBucketKey = []byte("Attachments")

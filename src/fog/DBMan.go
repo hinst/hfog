@@ -26,6 +26,7 @@ func (this *TDBMan) Start() {
 	this.db.Update(func(tx *bolt.Tx) error {
 		tx.CreateBucketIfNotExists(DBManTitlesBucketKey)
 		tx.CreateBucketIfNotExists(DBManEventsBucketKey)
+		tx.CreateBucketIfNotExists(DBManEventsBucketKey)
 		return nil
 	})
 }
@@ -132,4 +133,8 @@ func (this *TDBMan) ReadBugEvents(tx *bolt.Tx, bug *TBugCaseData) {
 		var dbStruct = event.ToDBStruct().ReadFromBucket(eventsBucket, []string{bug.IxBug, IntToStr(eventIndex)})
 		bug.Events.Events[eventIndex].LoadDBStruct(dbStruct)
 	}
+}
+
+func (this *TDBMan) WriteAttachment(fogUrlKey string, data []byte) {
+
 }
