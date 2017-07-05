@@ -6,9 +6,12 @@ import (
 	"io/ioutil"
 )
 
-func CompressBytes(a []byte) (result []byte) {
+const DefaultCompression = flate.DefaultCompression
+
+// Can use default compressionLevel: flate.DefaultCompression
+func CompressBytes(a []byte, compressionLevel int) (result []byte) {
 	var buffer bytes.Buffer
-	var writer, writerResult = flate.NewWriter(&buffer, flate.DefaultCompression)
+	var writer, writerResult = flate.NewWriter(&buffer, compressionLevel)
 	AssertResult(writerResult)
 	var _, writeResult = writer.Write(a)
 	AssertResult(writeResult)

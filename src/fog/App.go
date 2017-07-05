@@ -97,7 +97,7 @@ func (this *TApp) GetURL() string {
 }
 
 func (this *TApp) GetResponse(url string) *http.Response {
-	if true {
+	if false {
 		WriteLog("Get " + url)
 	}
 	var response, responseResult = http.Get(url)
@@ -202,19 +202,18 @@ func (this *TApp) RunAttachmentsMode() {
 	this.DB.Start()
 	var bugListData = ReadBugsFromFile(hgo.AppDir + "/data/bugs.xml")
 	var countOfAttachments = 0
-	var mustBreak = false
 	for _, item := range bugListData.Cases.Cases {
-		if mustBreak {
+		if false == this.CheckActive() {
 			break
 		}
 		var data = this.ReadBugData(item.IxBug)
 		for _, event := range data.Cases.Cases[0].Events.Events {
 			for _, attachment := range event.RGAttachments.Attachments {
 				if strings.HasSuffix(attachment.SFileName.Text, ".doc") || strings.HasSuffix(attachment.SFileName.Text, ".docx") {
-					WriteLog(IntToStr(countOfAttachments) + " " + attachment.SFileName.Text + " " + attachment.SURL.Text)
 					countOfAttachments++
 					if this.GrabAttachmentIfNecess(attachment) {
-						mustBreak = true
+						WriteLog(IntToStr(countOfAttachments) + " " + attachment.SFileName.Text + " " + attachment.SURL.Text)
+						time.Sleep(3 * time.Second)
 					}
 				}
 			}
@@ -238,7 +237,8 @@ func (this *TApp) ReadBugData(id string) (result *TBugData) {
 }
 
 func (this *TApp) GrabAttachmentIfNecess(a TAttachment) bool {
-	var op = TDBAttachmentOp{Tx: this.DB.StartTx(true)}
+	var op TDBAttachmentOp
+	op.Tx = this.DB.StartTx(true)
 	defer op.Tx.Commit()
 	op.Key = a.SURL.Text
 	if false == op.CheckExists() {
@@ -259,5 +259,14 @@ func (this *TApp) RunAttachmentTestMode() {
 	this.DB = (&TDBMan{}).Create()
 	this.DB.FilePath = "data/db-attachments.bolt"
 	this.DB.Start()
+	var op TDBAttachmentOp
+	op.Tx = this.DB.StartTx(false)
+	op.ForEach(func() {
+		WriteLog(op.FileName + " allowed=" + hgo.BoolToStr(op.Allowed))
+		WriteLog(op.Key)
+		WriteLog(IntToStr(len(op.Data)) + " " + strconv.FormatFloat(float64(op.CompressionRate), 'f', 2, 64))
+		ioutil.WriteFile("data/attachments/"+op.FileName, op.Data, os.ModePerm)
+	})
+	defer op.Tx.Commit()
 	this.DB.Stop()
 }
