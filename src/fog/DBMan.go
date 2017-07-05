@@ -26,7 +26,7 @@ func (this *TDBMan) Start() {
 	this.db.Update(func(tx *bolt.Tx) error {
 		tx.CreateBucketIfNotExists(DBManTitlesBucketKey)
 		tx.CreateBucketIfNotExists(DBManEventsBucketKey)
-		tx.CreateBucketIfNotExists(DBManEventsBucketKey)
+		tx.CreateBucketIfNotExists(DBManAttachmentsBucketKey)
 		return nil
 	})
 }
@@ -135,6 +135,8 @@ func (this *TDBMan) ReadBugEvents(tx *bolt.Tx, bug *TBugCaseData) {
 	}
 }
 
-func (this *TDBMan) WriteAttachment(fogUrlKey string, data []byte) {
-
+func (this *TDBMan) StartTx(canWrite bool) *bolt.Tx {
+	var transaction, transactionResult = this.db.Begin(canWrite)
+	AssertResult(transactionResult)
+	return transaction
 }

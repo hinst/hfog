@@ -19,9 +19,11 @@ const FogApiUrl = "/api.asp"
 type TApp struct {
 	Config *TConfig
 	Active int32
+	DB     *TDBMan
 
-	LoadBugsModeEnabled    bool
-	AttachmentsModeEnabled bool
+	LoadBugsModeEnabled       bool
+	AttachmentsModeEnabled    bool
+	AttachmentTestModeEnabled bool
 }
 
 func (this *TApp) Create() *TApp {
@@ -37,6 +39,9 @@ func (this *TApp) Run() {
 	}
 	if this.AttachmentsModeEnabled {
 		this.RunAttachmentsMode()
+	}
+	if this.AttachmentTestModeEnabled {
+		this.RunAttachmentTestMode()
 	}
 }
 
@@ -192,6 +197,9 @@ func (this *TApp) Prepare() {
 }
 
 func (this *TApp) RunAttachmentsMode() {
+	this.DB = (&TDBMan{}).Create()
+	this.DB.FilePath = "data/db-attachments.bolt"
+	this.DB.Start()
 	var bugListData = ReadBugsFromFile(hgo.AppDir + "/data/bugs.xml")
 	var countOfAttachments = 0
 	var mustBreak = false
@@ -205,17 +213,14 @@ func (this *TApp) RunAttachmentsMode() {
 				if strings.HasSuffix(attachment.SFileName.Text, ".doc") || strings.HasSuffix(attachment.SFileName.Text, ".docx") {
 					WriteLog(IntToStr(countOfAttachments) + " " + attachment.SFileName.Text + " " + attachment.SURL.Text)
 					countOfAttachments++
-					var dataFilePath = "data/attachments/" + item.IxBug + "-a-" + attachment.SFileName.Text
-					if false == hgo.CheckFileExists(dataFilePath) {
-						var data = this.LoadAttachment(attachment.SURL.Text)
-						var writeFileResult = ioutil.WriteFile(dataFilePath, data, os.ModePerm)
-						AssertResult(writeFileResult)
+					if this.GrabAttachmentIfNecess(attachment) {
 						mustBreak = true
 					}
 				}
 			}
 		}
 	}
+	this.DB.Stop()
 }
 
 func (this *TApp) ReadBugData(id string) (result *TBugData) {
@@ -230,4 +235,29 @@ func (this *TApp) ReadBugData(id string) (result *TBugData) {
 		}
 	}
 	return
+}
+
+func (this *TApp) GrabAttachmentIfNecess(a TAttachment) bool {
+	var op = TDBAttachmentOp{Tx: this.DB.StartTx(true)}
+	defer op.Tx.Commit()
+	op.Key = a.SURL.Text
+	if false == op.CheckExists() {
+		op.FileName = a.SFileName.Text
+		var data = this.LoadAttachment(a.SURL.Text)
+		op.Allowed = len(data) < 1024*1024
+		if op.Allowed {
+			op.Data = data
+		}
+		op.Write()
+		return true
+	} else {
+		return false
+	}
+}
+
+func (this *TApp) RunAttachmentTestMode() {
+	this.DB = (&TDBMan{}).Create()
+	this.DB.FilePath = "data/db-attachments.bolt"
+	this.DB.Start()
+	this.DB.Stop()
 }
