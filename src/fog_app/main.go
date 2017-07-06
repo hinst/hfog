@@ -8,7 +8,9 @@ import (
 func main() {
 	fmt.Println("STARTING...")
 	var app = (&fog.TApp{}).Create()
-	app.AttachmentTestModeEnabled = true
+	app.AttachmentsModeEnabled = true
+	app.AttachmentTestModeEnabled = false
+	app.EnumAttachmentsModeEnabled = false
 	app.Run()
 	fmt.Println("EXITING...")
 }

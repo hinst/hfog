@@ -21,9 +21,10 @@ type TApp struct {
 	Active int32
 	DB     *TDBMan
 
-	LoadBugsModeEnabled       bool
-	AttachmentsModeEnabled    bool
-	AttachmentTestModeEnabled bool
+	LoadBugsModeEnabled        bool
+	AttachmentsModeEnabled     bool
+	AttachmentTestModeEnabled  bool
+	EnumAttachmentsModeEnabled bool
 }
 
 func (this *TApp) Create() *TApp {
@@ -42,6 +43,9 @@ func (this *TApp) Run() {
 	}
 	if this.AttachmentTestModeEnabled {
 		this.RunAttachmentTestMode()
+	}
+	if this.EnumAttachmentsModeEnabled {
+		this.RunEnumAttachmentsMode()
 	}
 }
 
@@ -109,7 +113,6 @@ func (this *TApp) Get(url string) []byte {
 	var resp = this.GetResponse(url)
 	var data, readResult = ioutil.ReadAll(resp.Body)
 	AssertResult(readResult)
-	WriteLog(IntToStr(len(data)))
 	return data
 }
 
@@ -213,7 +216,7 @@ func (this *TApp) RunAttachmentsMode() {
 					countOfAttachments++
 					if this.GrabAttachmentIfNecess(attachment) {
 						WriteLog(IntToStr(countOfAttachments) + " " + attachment.SFileName.Text + " " + attachment.SURL.Text)
-						time.Sleep(3 * time.Second)
+						time.Sleep(5 * time.Second)
 					}
 				}
 			}
@@ -261,12 +264,38 @@ func (this *TApp) RunAttachmentTestMode() {
 	this.DB.Start()
 	var op TDBAttachmentOp
 	op.Tx = this.DB.StartTx(false)
+	var totalCount = 0
+	var allowedCount = 0
 	op.ForEach(func() {
+		totalCount++
 		WriteLog(op.FileName + " allowed=" + hgo.BoolToStr(op.Allowed))
+		if op.Allowed {
+			allowedCount++
+		}
 		WriteLog(op.Key)
 		WriteLog(IntToStr(len(op.Data)) + " " + strconv.FormatFloat(float64(op.CompressionRate), 'f', 2, 64))
 		ioutil.WriteFile("data/attachments/"+op.FileName, op.Data, os.ModePerm)
 	})
 	defer op.Tx.Commit()
+	WriteLog("total=" + IntToStr(totalCount) + " allowed=" + IntToStr(allowedCount))
 	this.DB.Stop()
+}
+
+func (this *TApp) RunEnumAttachmentsMode() {
+	var bugListData = ReadBugsFromFile(hgo.AppDir + "/data/bugs.xml")
+	var countOfAttachments = 0
+	for _, item := range bugListData.Cases.Cases {
+		if false == this.CheckActive() {
+			break
+		}
+		var data = this.ReadBugData(item.IxBug)
+		for _, event := range data.Cases.Cases[0].Events.Events {
+			for _, attachment := range event.RGAttachments.Attachments {
+				if strings.HasSuffix(attachment.SFileName.Text, ".doc") || strings.HasSuffix(attachment.SFileName.Text, ".docx") {
+					countOfAttachments++
+				}
+			}
+		}
+	}
+	WriteLog("countOfAttachments=" + IntToStr(countOfAttachments))
 }
