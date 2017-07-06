@@ -25,6 +25,8 @@ type TApp struct {
 	AttachmentsModeEnabled     bool
 	AttachmentTestModeEnabled  bool
 	EnumAttachmentsModeEnabled bool
+
+	AttachmentFilter []string
 }
 
 func (this *TApp) Create() *TApp {
@@ -212,7 +214,7 @@ func (this *TApp) RunAttachmentsMode() {
 		var data = this.ReadBugData(item.IxBug)
 		for _, event := range data.Cases.Cases[0].Events.Events {
 			for _, attachment := range event.RGAttachments.Attachments {
-				if strings.HasSuffix(attachment.SFileName.Text, ".doc") || strings.HasSuffix(attachment.SFileName.Text, ".docx") {
+				if this.CheckAttachmentFilterPass(attachment.SFileName.Text) {
 					countOfAttachments++
 					if this.GrabAttachmentIfNecess(attachment) {
 						WriteLog(IntToStr(countOfAttachments) + " " + attachment.SFileName.Text + " " + attachment.SURL.Text)
@@ -291,11 +293,21 @@ func (this *TApp) RunEnumAttachmentsMode() {
 		var data = this.ReadBugData(item.IxBug)
 		for _, event := range data.Cases.Cases[0].Events.Events {
 			for _, attachment := range event.RGAttachments.Attachments {
-				if strings.HasSuffix(attachment.SFileName.Text, ".doc") || strings.HasSuffix(attachment.SFileName.Text, ".docx") {
+				if this.CheckAttachmentFilterPass(attachment.SFileName.Text) {
 					countOfAttachments++
 				}
 			}
 		}
 	}
 	WriteLog("countOfAttachments=" + IntToStr(countOfAttachments))
+}
+
+func (this *TApp) CheckAttachmentFilterPass(x string) (result bool) {
+	for _, suffix := range this.AttachmentFilter {
+		if strings.HasSuffix(x, suffix) {
+			result = true
+			break
+		}
+	}
+	return
 }
