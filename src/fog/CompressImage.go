@@ -16,17 +16,26 @@ type TCompressImage struct {
 	TargetWidth int
 }
 
-func (this TCompressImage) CompressImage(data []byte) (result []byte) {
-	var img, _, decodeResult = image.Decode(bytes.NewReader(data))
+func (this TCompressImage) Go(data []byte) (result []byte) {
+	var img, typeStr, decodeResult = image.Decode(bytes.NewReader(data))
 	if decodeResult == nil && img != nil {
-		var compressedImg = img
-		if img.Bounds().Dx() <= this.TargetWidth {
-		} else {
-			compressedImg = resize.Resize(uint(this.TargetWidth), 0, img, resize.Lanczos3)
+		if img.Bounds().Dx() <= this.TargetWidth && typeStr == "jpeg" {
+			result = data
 		}
-		var compressedData bytes.Buffer
-		jpeg.Encode(&compressedData, compressedImg, nil)
-		result = compressedData.Bytes()
+		if img.Bounds().Dx() <= this.TargetWidth && typeStr != "jpeg" {
+			result = JpegEncode(img)
+		}
+		if this.TargetWidth < img.Bounds().Dx() {
+			var resizedImg = resize.Resize(uint(this.TargetWidth), 0, img, resize.Lanczos3)
+			result = JpegEncode(resizedImg)
+		}
 	}
+	return
+}
+
+func JpegEncode(img image.Image) (result []byte) {
+	var compressedData bytes.Buffer
+	jpeg.Encode(&compressedData, img, &jpeg.Options{Quality: 50})
+	result = compressedData.Bytes()
 	return
 }

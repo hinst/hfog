@@ -16,7 +16,8 @@ func main() {
 	app.AttachmentFilter = afImg
 	app.AttachmentsModeEnabled = false
 	app.AttachmentTestModeEnabled = false
-	app.EnumAttachmentsModeEnabled = true
+	app.EnumAttachmentsModeEnabled = false
+	app.ImageCompressionTestModeEnabled = true
 	app.Run()
 	fmt.Println("EXITING...")
 }

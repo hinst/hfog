@@ -21,10 +21,11 @@ type TApp struct {
 	Active int32
 	DB     *TDBMan
 
-	LoadBugsModeEnabled        bool
-	AttachmentsModeEnabled     bool
-	AttachmentTestModeEnabled  bool
-	EnumAttachmentsModeEnabled bool
+	LoadBugsModeEnabled             bool
+	AttachmentsModeEnabled          bool
+	AttachmentTestModeEnabled       bool
+	EnumAttachmentsModeEnabled      bool
+	ImageCompressionTestModeEnabled bool
 
 	AttachmentFilter []string
 }
@@ -48,6 +49,9 @@ func (this *TApp) Run() {
 	}
 	if this.EnumAttachmentsModeEnabled {
 		this.RunEnumAttachmentsMode()
+	}
+	if this.ImageCompressionTestModeEnabled {
+		this.RunImageCompressionTest()
 	}
 }
 
@@ -310,4 +314,24 @@ func (this *TApp) CheckAttachmentFilterPass(x string) (result bool) {
 		}
 	}
 	return
+}
+
+func (this *TApp) RunImageCompressionTest() {
+	var compressImage = TCompressImage{TargetWidth: 1000}
+
+	var png1024, _ = ioutil.ReadFile("testData/1024.png")
+	var png1024c = compressImage.Go(png1024)
+	ioutil.WriteFile("testData/1024.png.jpg", png1024c, os.ModePerm)
+
+	var png900, _ = ioutil.ReadFile("testData/900.png")
+	var png900c = compressImage.Go(png900)
+	ioutil.WriteFile("testData/900.png.jpg", png900c, os.ModePerm)
+
+	var jpg900, _ = ioutil.ReadFile("testData/900.jpg")
+	var jpg900c = compressImage.Go(jpg900)
+	ioutil.WriteFile("testData/900.jpg.jpg", jpg900c, os.ModePerm)
+
+	var jpg1024, _ = ioutil.ReadFile("testData/1024.jpg")
+	var jpg1024c = compressImage.Go(jpg1024)
+	ioutil.WriteFile("testData/1024.jpg.jpg", jpg1024c, os.ModePerm)
 }
