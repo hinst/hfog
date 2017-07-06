@@ -26,6 +26,7 @@ func (this *TWebApp) Create() *TWebApp {
 func (this *TWebApp) Run() {
 	this.LoadConfig()
 	this.DB = (&TDBMan{}).Create()
+	this.DB.ReadOnly = true
 	this.DB.Start()
 	this.WebUI = (&TWebUI{}).Create()
 	this.WebUI.DB = this.DB

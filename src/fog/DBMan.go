@@ -11,6 +11,7 @@ import (
 
 type TDBMan struct {
 	FilePath string
+	ReadOnly bool
 	db       *bolt.DB
 }
 
@@ -20,6 +21,8 @@ func (this *TDBMan) Create() *TDBMan {
 }
 
 func (this *TDBMan) Start() {
+	var o = bolt.DefaultOptions
+	o.ReadOnly = this.ReadOnly
 	var db, dbOpenResult = bolt.Open(this.FilePath, os.ModePerm, nil)
 	AssertResult(dbOpenResult)
 	this.db = db
