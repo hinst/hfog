@@ -11,13 +11,11 @@ func main() {
 	var app = (&fog.TApp{}).Create()
 	var afDoc = []string{".doc", ".docx"}
 	hgo.Unuse(afDoc)
-	var afImg = []string{".png", ".gif", ".jpg"}
-	hgo.Unuse(afImg)
-	app.AttachmentFilter = afImg
+	app.AttachmentFilter = fog.ImageFileNameSuffixes
 	app.AttachmentsModeEnabled = false
 	app.AttachmentTestModeEnabled = false
 	app.EnumAttachmentsModeEnabled = false
-	app.ImageCompressionTestModeEnabled = true
+	app.ImageCompressionTestModeEnabled = false
 	app.Run()
 	fmt.Println("EXITING...")
 }

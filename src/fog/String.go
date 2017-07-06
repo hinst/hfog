@@ -37,3 +37,13 @@ func CountStringContainsFromArray(text string, words []string) (result int) {
 	}
 	return
 }
+
+func CheckStringHasSuffixes(text string, suffixes []string) (result bool) {
+	for _, suffix := range suffixes {
+		if strings.HasSuffix(text, suffix) {
+			result = true
+			break
+		}
+	}
+	return
+}

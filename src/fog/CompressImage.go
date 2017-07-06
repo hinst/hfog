@@ -39,3 +39,5 @@ func JpegEncode(img image.Image) (result []byte) {
 	result = compressedData.Bytes()
 	return
 }
+
+var ImageFileNameSuffixes = []string{".png", ".gif", ".jpg", ".jpeg"}
