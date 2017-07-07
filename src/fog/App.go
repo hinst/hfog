@@ -26,6 +26,7 @@ type TApp struct {
 	AttachmentTestModeEnabled       bool
 	EnumAttachmentsModeEnabled      bool
 	ImageCompressionTestModeEnabled bool
+	RunAllowImagesMode              bool
 
 	AttachmentFilter []string
 }
@@ -52,6 +53,9 @@ func (this *TApp) Run() {
 	}
 	if this.ImageCompressionTestModeEnabled {
 		this.RunImageCompressionTest()
+	}
+	if this.RunAllowImagesMode {
+		this.RunAllowImages()
 	}
 }
 
@@ -253,7 +257,7 @@ func (this *TApp) GrabAttachmentIfNecess(a TAttachment) bool {
 	if false == op.CheckExists() {
 		op.FileName = a.SFileName.Text
 		var data = this.LoadAttachment(a.SURL.Text)
-		op.Allowed = len(data) < 1024*1024
+		op.Allowed = true //len(data) < 1024*1024
 		if op.Allowed {
 			if CheckStringHasSuffixes(op.FileName, ImageFileNameSuffixes) {
 				var imageData = TCompressImage{TargetWidth: 1000}.Go(data)
@@ -339,4 +343,29 @@ func (this *TApp) RunImageCompressionTest() {
 	var jpg1024, _ = ioutil.ReadFile("testData/1024.jpg")
 	var jpg1024c = compressImage.Go(jpg1024)
 	ioutil.WriteFile("testData/1024.jpg.jpg", jpg1024c, os.ModePerm)
+}
+
+func (this *TApp) RunAllowImages() {
+	this.DB = (&TDBMan{}).Create()
+	this.DB.FilePath = "data/db-attachments.bolt"
+	this.DB.Start()
+	var op TDBAttachmentOp
+	op.HeadMode = true
+	op.Tx = this.DB.StartTx(true)
+	var totalCount = 0
+	var keysToRemove []string
+	op.ForEach(func() {
+		if false && CheckStringHasSuffixes(op.FileName, ImageFileNameSuffixes) && false == op.Allowed ||
+			CheckStringHasSuffixes(op.FileName, []string{".png", ".gif"}) {
+			keysToRemove = append(keysToRemove, op.Key)
+		}
+	})
+	for _, key := range keysToRemove {
+		op.Key = key
+		op.Delete()
+		totalCount++
+	}
+	WriteLog("reset=" + IntToStr(totalCount))
+	op.Tx.Commit()
+	this.DB.Stop()
 }

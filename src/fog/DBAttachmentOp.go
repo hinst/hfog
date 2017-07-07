@@ -11,6 +11,7 @@ type TDBAttachmentOp struct {
 	FileName string
 
 	CompressionRate float32
+	HeadMode        bool
 }
 
 func (this *TDBAttachmentOp) Write() {
@@ -50,11 +51,13 @@ func (this *TDBAttachmentOp) ForEach(f func()) {
 
 func (this *TDBAttachmentOp) Read() {
 	var bucket = this.Tx.Bucket(DBManAttachmentsBucketKey)
-	var compressedData = bucket.Get(
-		GetDBManKey([]string{this.Key, "Data"}),
-	)
-	this.Data = hgo.DecompressBytes(compressedData)
-	this.CompressionRate = float32(len(compressedData)) / float32(len(this.Data))
+	if false == this.HeadMode {
+		var compressedData = bucket.Get(
+			GetDBManKey([]string{this.Key, "Data"}),
+		)
+		this.Data = hgo.DecompressBytes(compressedData)
+		this.CompressionRate = float32(len(compressedData)) / float32(len(this.Data))
+	}
 	this.Allowed = BoolFromData(
 		bucket.Get(
 			GetDBManKey([]string{this.Key, "Allowed"}),
@@ -65,4 +68,11 @@ func (this *TDBAttachmentOp) Read() {
 			GetDBManKey([]string{this.Key, "FileName"}),
 		),
 	)
+}
+
+func (this *TDBAttachmentOp) Delete() {
+	var bucket = this.Tx.Bucket(DBManAttachmentsBucketKey)
+	bucket.Delete(GetDBManKey([]string{this.Key, "Data"}))
+	bucket.Delete(GetDBManKey([]string{this.Key, "Allowed"}))
+	bucket.Delete(GetDBManKey([]string{this.Key, "FileName"}))
 }

@@ -20,7 +20,7 @@ func (this TCompressImage) Go(data []byte) (result []byte) {
 	var img, typeStr, decodeResult = image.Decode(bytes.NewReader(data))
 	if decodeResult == nil && img != nil {
 		if img.Bounds().Dx() <= this.TargetWidth && typeStr == "jpeg" {
-			result = data
+			result = JpegEncode(img)
 		}
 		if img.Bounds().Dx() <= this.TargetWidth && typeStr != "jpeg" {
 			result = JpegEncode(img)
@@ -29,6 +29,9 @@ func (this TCompressImage) Go(data []byte) (result []byte) {
 			var resizedImg = resize.Resize(uint(this.TargetWidth), 0, img, resize.Lanczos3)
 			result = JpegEncode(resizedImg)
 		}
+	}
+	if len(data) < len(result) {
+		result = data
 	}
 	return
 }
