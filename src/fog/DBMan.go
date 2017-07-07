@@ -135,8 +135,8 @@ func (this *TDBMan) ReadBugEvents(tx *bolt.Tx, bug *TBugCaseData) {
 		eventsBucket.Get(GetDBManKey([]string{bug.IxBug, "n"})),
 	))
 	bug.Events.Events = make([]TBugCaseEventData, countOfEvents)
-	for eventIndex, event := range bug.Events.Events {
-		var dbStruct = event.ToDBStruct().ReadFromBucket(eventsBucket, []string{bug.IxBug, IntToStr(eventIndex)})
+	for eventIndex := range bug.Events.Events {
+		var dbStruct = TDBFlatStructArray{}.ReadFromBucket(eventsBucket, []string{bug.IxBug, IntToStr(eventIndex)})
 		bug.Events.Events[eventIndex].LoadDBStruct(dbStruct)
 	}
 }
