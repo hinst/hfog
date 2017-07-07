@@ -101,8 +101,11 @@ func (this *TDBMan) CheckBugFits(tx *bolt.Tx, bugId string, filterWords []string
 }
 
 func (this *TDBMan) WriteToFile(filePath string) {
+	var file, fileResult = os.Create(filePath)
+	AssertResult(fileResult)
 	this.db.View(func(tx *bolt.Tx) error {
-		tx.CopyFile(filePath, os.ModePerm)
+		tx.WriteTo(file)
+		file.Close()
 		return nil
 	})
 }
@@ -142,4 +145,34 @@ func (this *TDBMan) StartTx(canWrite bool) *bolt.Tx {
 	var transaction, transactionResult = this.db.Begin(canWrite)
 	AssertResult(transactionResult)
 	return transaction
+}
+
+func (this *TDBMan) CopyAttachments(tx *bolt.Tx, db *TDBMan) {
+	var dbTx = db.StartTx(false)
+	dbTx.Bucket(DBManAttachmentsBucketKey).ForEach(
+		func(key, value []byte) error {
+			tx.Bucket(DBManAttachmentsBucketKey).Put(key, value)
+			return nil
+		})
+}
+
+func (this *TDBMan) ClearAttachments(tx *bolt.Tx) {
+	var keys [][]byte
+	tx.Bucket(DBManAttachmentsBucketKey).ForEach(
+		func(key, value []byte) error {
+			keys = append(keys, key)
+			return nil
+		})
+	for _, key := range keys {
+		tx.Bucket(DBManAttachmentsBucketKey).Delete(key)
+	}
+}
+
+func (this *TDBMan) GetCountOfAttachments(tx *bolt.Tx) (result int) {
+	var op TDBAttachmentOp
+	op.Tx = tx
+	op.ForEach(func() {
+		result++
+	})
+	return
 }

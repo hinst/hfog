@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"fog"
 	"hgo"
+	"runtime/debug"
 )
 
 func main() {
 	fmt.Println("STARTING...")
+	debug.SetGCPercent(10)
 	var app = (&fog.TApp{}).Create()
 	var afDoc = []string{".doc", ".docx"}
 	hgo.Unuse(afDoc)
