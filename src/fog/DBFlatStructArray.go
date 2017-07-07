@@ -1,6 +1,8 @@
 package fog
 
 import (
+	"bytes"
+
 	"github.com/boltdb/bolt"
 )
 
@@ -30,12 +32,13 @@ func (this TDBFlatStructArray) ReadStrings() (result map[string]string) {
 }
 
 func (this TDBFlatStructArray) ReadFromBucket(bucket *bolt.Bucket, key []string) (result TDBFlatStructArray) {
-	result = make(TDBFlatStructArray, len(this))
-	for i, item := range this {
-		result[i].Key = this[i].Key
-		var fullKey = GetDBManKey(append(key, item.Key))
-		var data = bucket.Get(fullKey)
-		result[i].Data = string(data)
+	var prefix = GetDBManKey(key)
+	var cursor = bucket.Cursor()
+	for subKey, value := cursor.Seek(prefix); subKey != nil && bytes.HasPrefix(subKey, prefix); subKey, value = cursor.Next() {
+		var item TDBFlatStruct
+		item.Key = UnpackDBManKey(subKey)[len(subKey)]
+		item.Data = string(value)
+		result = append(result, item)
 	}
 	return
 }
