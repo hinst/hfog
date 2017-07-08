@@ -61,18 +61,18 @@ func (this *TDBAttachmentOp) ForEach(f func()) {
 
 func (this *TDBAttachmentOp) Read() {
 	var bucket = this.Tx.Bucket(DBManAttachmentsBucketKey)
-	if false == this.HeadMode {
+	this.Allowed = BoolFromData(
+		bucket.Get(
+			GetDBManKey([]string{this.Key, "Allowed"}),
+		),
+	)
+	if false == this.HeadMode && this.Allowed {
 		var compressedData = bucket.Get(
 			GetDBManKey([]string{this.Key, "Data"}),
 		)
 		this.Data = hgo.DecompressBytes(compressedData)
 		this.CompressionRate = float32(len(compressedData)) / float32(len(this.Data))
 	}
-	this.Allowed = BoolFromData(
-		bucket.Get(
-			GetDBManKey([]string{this.Key, "Allowed"}),
-		),
-	)
 	this.FileName = string(
 		bucket.Get(
 			GetDBManKey([]string{this.Key, "FileName"}),

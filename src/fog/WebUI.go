@@ -24,7 +24,7 @@ func (this *TWebUI) Start() {
 	this.AddRequestHandler("/bugs", this.GetBugs)
 	this.AddRequestHandler("/getBug", this.GetBug)
 	this.AddRequestHandler("/getBugsFiltered", this.GetBugsFiltered)
-	this.AddRequestHandler("/getAtt", this.DownloadAttachment)
+	this.AddRequestHandler("/getAtt/", this.DownloadAttachment)
 	this.InstallUiFileHandlers()
 }
 

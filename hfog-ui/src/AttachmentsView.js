@@ -8,7 +8,7 @@ export function CreateAttachmentsView(props) {
         return (
             <span style={{marginRight: "8px"}}>
                 <a 
-                    href={ApiURL + "/getAtt?" + AccessKey.GetURL() + "&key=" + encodeURIComponent(attachmentData.KeyURL)}
+                    href={ApiURL + "/getAtt/" + encodeURIComponent(attachmentData.FileName) +"?" + AccessKey.GetURL() + "&key=" + encodeURIComponent(attachmentData.KeyURL)}
                 >
                     <img 
                         alt="[F]"
