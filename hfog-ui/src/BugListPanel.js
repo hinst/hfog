@@ -10,8 +10,8 @@ class BugListPanel extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			bugs: [],
-			sortedBugs: [],
+			bugs: null,
+			sortedBugs: null,
       		sortAscending: false,
 			searchPanelVisible: false,
 			filterString: "",
@@ -49,7 +49,7 @@ class BugListPanel extends React.Component {
 				<span style={{marginLeft: "4px"}}></span>
 				<button className="w3-btn w3-black" onClick={ () => this.receiveSearchClick() }>Search</button>
 				<span style={{marginLeft: "4px"}}></span>
-				Showing {this.state.bugs.length} items
+				Showing {this.state.bugs != null ? this.state.bugs.length : "no"} items
 				<span style={{marginLeft: "4px"}}></span>
 				{this.state.filterString.length > 0
 					? (
@@ -90,6 +90,7 @@ class BugListPanel extends React.Component {
 	}
 
 	requestBugs() {
+		this.setState({bugs: null, sortedBugs: null});
 		if (this.state.filterString.length === 0)
 			Api.LoadBugList(data => this.receiveBugs(data));
 		else {
@@ -98,7 +99,7 @@ class BugListPanel extends React.Component {
 	}
 
 	receiveBugs(data) {
-		this.setState({bugs: data}, () => this.sortBugs());
+		this.setState({bugs: data, sortedBugs: null}, () => this.sortBugs());
 	}
 
 	receiveSearchAct(keywords) {
@@ -106,7 +107,7 @@ class BugListPanel extends React.Component {
 			{
 				searchPanelVisible: false,
 				filterString: keywords,
-				bugs: [],
+				bugs: null, sortedBugs: null,
 			},
 			() => this.requestBugs());
 	}
@@ -129,24 +130,28 @@ class BugListPanel extends React.Component {
 	}
 
 	checkPageNumberValid(pageNumber) {
-		return (0 <= pageNumber) && (pageNumber * this.state.pageSize < this.state.sortedBugs.length);
+		return (this.state.sortedBugs != null) && (0 <= pageNumber) && (pageNumber * this.state.pageSize < this.state.sortedBugs.length);
 	}
 
 	getSortedBugs() {
 		const sortAscending = this.state.sortAscending;
-		const bugs = this.state.bugs.slice();
-		bugs.sort((a, b) => {
-			var rankDiff = a.Rank - b.Rank;
-			if (rankDiff === 0) {
-				var numberDiff = a.Number - b.Number;
-				if ( !sortAscending ) {
-					numberDiff = -numberDiff;
+		const bugs = this.state.bugs != null
+			? this.state.bugs.slice()
+			: null;
+		if (bugs != null) {
+			bugs.sort((a, b) => {
+				var rankDiff = a.Rank - b.Rank;
+				if (rankDiff === 0) {
+					var numberDiff = a.Number - b.Number;
+					if ( !sortAscending ) {
+						numberDiff = -numberDiff;
+					}
+					return numberDiff;
+				} else {
+					return -rankDiff;
 				}
-				return numberDiff;
-			} else {
-				return -rankDiff;
-			}
-		});
+			});
+		}
 		return bugs;
 	}
 
@@ -155,9 +160,13 @@ class BugListPanel extends React.Component {
 	}
 
 	getVisibleBugs() {
-		let start = this.state.pageNumber * this.state.pageSize;
-		let end = start + this.state.pageSize;
-		return this.state.sortedBugs.slice(start, end);
+		if (this.state.sortedBugs != null) {
+			let start = this.state.pageNumber * this.state.pageSize;
+			let end = start + this.state.pageSize;
+			return this.state.sortedBugs.slice(start, end);
+		} else {
+			return null;
+		}
 	}
 
 	receivePageNumberClick() {

@@ -5,37 +5,27 @@ class BugListView extends React.PureComponent {
 
 	render() {
 		const bugs = this.props.bugs;
-		const bugHeadItems = bugs.map(
-			(bug) => {
-				return (
-					<BugHeadItem 
-						key={bug.Number} 
-						number={bug.Number} 
-						title={bug.Title}
-						clickReceiver={this.props.itemClickReceiver}
-					/>
+		let content = "";
+		if (bugs != null) {
+			if (bugs.length > 0) {
+				const bugHeadItems = bugs.map(
+					(bug) => {
+						return (
+							<BugHeadItem 
+								key={bug.Number} 
+								number={bug.Number} 
+								title={bug.Title}
+								clickReceiver={this.props.itemClickReceiver}
+							/>
+						);
+					}
 				);
-			}
-		);
-		return (<div>{bugHeadItems}</div>);
-	}
-
-	getSortedBugs() {
-		const sortAscending = this.props.sortAscending;
-		const bugs = this.props.bugs.slice();
-		bugs.sort((a, b) => {
-			var rankDiff = a.Rank - b.Rank;
-			if (rankDiff === 0) {
-				var numberDiff = a.Number - b.Number;
-				if ( !sortAscending ) {
-					numberDiff = -numberDiff;
-				}
-				return numberDiff;
+				content = bugHeadItems;
 			} else {
-				return -rankDiff;
+				content = <div className="w3-panel">Empty list</div>;
 			}
-		});
-		return bugs;
+		}
+		return (<div>{content}</div>);
 	}
 
 }
