@@ -1,9 +1,11 @@
 import React from 'react';
 import CreateAttachmentsView from './AttachmentsView';
+import FileURL from './FileURL';
 
 class BugEventView extends React.PureComponent {
 
     render() {
+        console.log(this.props.attachments);
         return (
             <div style={{lineHeight: 1}}>
                 <hr/>
@@ -18,6 +20,7 @@ class BugEventView extends React.PureComponent {
                     ? this.getVisibleTextPanel()
                     : ""
                 }
+                {this.getAttachmentsView()}
             </div>
         );
     }
@@ -47,10 +50,20 @@ class BugEventView extends React.PureComponent {
 
     getVisibleTextPanel() {
         return (
-            <div className="w3-panel w3-leftbar" style={{marginTop: 0, lineHeight: 1.2}}>
+            <div className="w3-panel" style={{marginTop: 0, lineHeight: 1.2}}>
                 {this.getVisibleText()}
             </div>
         );
+    }
+
+    getAttachmentsView() {
+        console.log("a");
+        if (this.props.attachments != null && this.props.attachments.length > 0) {
+            console.log("b");
+            return <CreateAttachmentsView attachments={this.props.attachments}/>;
+        } else {
+            return "";
+        }
     }
 
 } 

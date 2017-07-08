@@ -38,6 +38,7 @@ class BugView extends React.Component {
     renderEvents() {
         const items = this.state.events.map(
             (event, i) => {
+                console.log(event.Attachments);
                 return (
                     <BugEventView 
                         key={this.props.match.params.bugId + "-" + i}
