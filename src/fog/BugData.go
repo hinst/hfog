@@ -58,6 +58,14 @@ func (this *TBugCaseData) ToBugDataWeb() (result *TBugDataWeb) {
 			Text:        event.S.Text,
 			HTML:        event.SHTML.Text,
 		}
+		for _, attachment := range event.RGAttachments.Attachments {
+			newEvent.Attachments = append(newEvent.Attachments,
+				TBugDataWebAttachment{
+					FileName: attachment.SFileName.Text,
+					KeyURL:   attachment.SURL.Text,
+				},
+			)
+		}
 		result.Events = append(result.Events, newEvent)
 	}
 	return

@@ -6,6 +6,11 @@ type TBugDataWeb struct {
 	Events []TBugDataWebEvent
 }
 
+type TBugDataWebAttachment struct {
+	FileName string
+	KeyURL   string
+}
+
 type TBugDataWebEvent struct {
 	Moment      string
 	Verb        string
@@ -13,4 +18,5 @@ type TBugDataWebEvent struct {
 	Person      string
 	Text        string
 	HTML        string
+	Attachments []TBugDataWebAttachment
 }
