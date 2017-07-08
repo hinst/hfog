@@ -46,6 +46,7 @@ class BugView extends React.Component {
                         verb={event.Verb}
                         text={event.Text}
                         html={event.HTML}
+                        attachments={event.Attachments}
                     />
                 );
             });

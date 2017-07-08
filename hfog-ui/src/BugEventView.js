@@ -1,4 +1,5 @@
 import React from 'react';
+import CreateAttachmentsView from './AttachmentsView';
 
 class BugEventView extends React.PureComponent {
 
