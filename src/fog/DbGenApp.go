@@ -89,5 +89,18 @@ func (this *TDBGenApp) LoadAttachments() {
 		defer tx.Commit()
 		WriteLog("destinationAttachments=" + IntToStr(this.DB.GetCountOfAttachments(tx)))
 	}()
+	func() {
+		var tx = this.DB.StartTx(false)
+		defer tx.Commit()
+		WriteLog("destinationAttachments=" + IntToStr(this.DB.GetCountOfAttachments(tx)))
+	}()
+	func() {
+		var tx = this.DB.StartTx(true)
+		defer tx.Commit()
+		var types = this.DB.DetectImageTypes(tx)
+		for key, value := range types {
+			WriteLog(key + "=" + IntToStr(value))
+		}
+	}()
 	attachmentDB.Stop()
 }

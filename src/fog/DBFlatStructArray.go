@@ -36,7 +36,7 @@ func (this TDBFlatStructArray) ReadFromBucket(bucket *bolt.Bucket, key []string)
 	var cursor = bucket.Cursor()
 	for subKey, value := cursor.Seek(prefix); subKey != nil && bytes.HasPrefix(subKey, prefix); subKey, value = cursor.Next() {
 		var item TDBFlatStruct
-		item.Key = UnpackDBManKey(subKey)[len(subKey)]
+		item.Key = UnpackDBManKey(subKey)[len(key)]
 		item.Data = string(value)
 		result = append(result, item)
 	}

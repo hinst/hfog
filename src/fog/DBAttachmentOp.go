@@ -1,14 +1,20 @@
 package fog
 
-import "github.com/boltdb/bolt"
-import "hgo"
+import (
+	"bytes"
+	"hgo"
+	"image"
+
+	"github.com/boltdb/bolt"
+)
 
 type TDBAttachmentOp struct {
-	Tx       *bolt.Tx
-	Key      string
-	Allowed  bool
-	Data     []byte
-	FileName string
+	Tx        *bolt.Tx
+	Key       string
+	Allowed   bool
+	Data      []byte
+	FileName  string
+	ImageType string
 
 	CompressionRate float32
 	HeadMode        bool
@@ -28,6 +34,10 @@ func (this *TDBAttachmentOp) Write() {
 	bucket.Put(
 		GetDBManKey([]string{this.Key, "FileName"}),
 		[]byte(this.FileName),
+	)
+	bucket.Put(
+		GetDBManKey([]string{this.Key, "ImageType"}),
+		[]byte(this.ImageType),
 	)
 }
 
@@ -68,6 +78,11 @@ func (this *TDBAttachmentOp) Read() {
 			GetDBManKey([]string{this.Key, "FileName"}),
 		),
 	)
+	this.FileName = string(
+		bucket.Get(
+			GetDBManKey([]string{this.Key, "ImageType"}),
+		),
+	)
 }
 
 func (this *TDBAttachmentOp) Delete() {
@@ -75,4 +90,19 @@ func (this *TDBAttachmentOp) Delete() {
 	bucket.Delete(GetDBManKey([]string{this.Key, "Data"}))
 	bucket.Delete(GetDBManKey([]string{this.Key, "Allowed"}))
 	bucket.Delete(GetDBManKey([]string{this.Key, "FileName"}))
+}
+
+func (this *TDBAttachmentOp) DetectImageType() {
+	var _, typeStr, decodeResult = image.Decode(bytes.NewReader(this.Data))
+	if decodeResult == nil {
+		this.ImageType = typeStr
+	}
+}
+
+func (this *TDBAttachmentOp) WriteImageType() {
+	var bucket = this.Tx.Bucket(DBManAttachmentsBucketKey)
+	bucket.Put(
+		GetDBManKey([]string{this.Key, "ImageType"}),
+		[]byte(this.ImageType),
+	)
 }

@@ -176,3 +176,20 @@ func (this *TDBMan) GetCountOfAttachments(tx *bolt.Tx) (result int) {
 	})
 	return
 }
+
+func (this *TDBMan) DetectImageTypes(tx *bolt.Tx) (types map[string]int) {
+	types = make(map[string]int)
+	var op TDBAttachmentOp
+	op.Tx = tx
+	op.ForEach(func() {
+		op.DetectImageType()
+		op.WriteImageType()
+		var count, exists = types[op.ImageType]
+		if false == exists {
+			count = 0
+		}
+		count++
+		types[op.ImageType] = count
+	})
+	return
+}
