@@ -193,3 +193,11 @@ func (this *TDBMan) DetectImageTypes(tx *bolt.Tx) (types map[string]int) {
 	})
 	return
 }
+
+func (this *TDBMan) LoadAttachment(tx *bolt.Tx, key string) (data []byte) {
+	var op TDBAttachmentOp
+	op.Tx = tx
+	op.Key = key
+	op.Read()
+	return op.Data
+}

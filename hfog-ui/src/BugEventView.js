@@ -4,7 +4,6 @@ import CreateAttachmentsView from './AttachmentsView';
 class BugEventView extends React.PureComponent {
 
     render() {
-        console.log(this.props.attachments);
         return (
             <div style={{lineHeight: 1}}>
                 <hr/>
@@ -56,9 +55,7 @@ class BugEventView extends React.PureComponent {
     }
 
     getAttachmentsView() {
-        console.log("a");
         if (this.props.attachments != null && this.props.attachments.length > 0) {
-            console.log("b");
             return <CreateAttachmentsView attachments={this.props.attachments}/>;
         } else {
             return "";

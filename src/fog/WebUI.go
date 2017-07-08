@@ -9,12 +9,14 @@ import (
 
 type TWebUI struct {
 	URL       string
+	ApiURL    string
 	DB        *TDBMan
 	AccessKey string
 }
 
 func (this *TWebUI) Create() *TWebUI {
 	this.URL = "/FogBugzBackup"
+	this.ApiURL = "/FogBugzBackupApi"
 	return this
 }
 
@@ -22,6 +24,7 @@ func (this *TWebUI) Start() {
 	this.AddRequestHandler("/bugs", this.GetBugs)
 	this.AddRequestHandler("/getBug", this.GetBug)
 	this.AddRequestHandler("/getBugsFiltered", this.GetBugsFiltered)
+	this.AddRequestHandler("/getAtt", this.DownloadAttachment)
 	this.InstallUiFileHandlers()
 }
 
@@ -57,7 +60,7 @@ func (this *TWebUI) AddRequestHandler(url string, f func(response http.ResponseW
 			response.Write([]byte("ERROR: AccessKey mismatch"))
 		}
 	}
-	http.HandleFunc(this.URL+url, wrappedFunc)
+	http.HandleFunc(this.ApiURL+url, wrappedFunc)
 }
 
 func (this *TWebUI) InstallUiFileHandler(subDir string) {
@@ -90,5 +93,18 @@ func (this *TWebUI) GetBug(response http.ResponseWriter, request *http.Request) 
 		response.Write(data)
 	} else {
 		response.Write([]byte("No such bug"))
+	}
+}
+
+func (this *TWebUI) DownloadAttachment(response http.ResponseWriter, request *http.Request) {
+	WriteLog("Att")
+	var key = request.URL.Query().Get("key")
+	if len(key) > 0 {
+		func() {
+			var tx = this.DB.StartTx(false)
+			defer tx.Commit()
+			var data = this.DB.LoadAttachment(tx, key)
+			response.Write(data)
+		}()
 	}
 }
