@@ -78,7 +78,7 @@ func (this *TDBAttachmentOp) Read() {
 			GetDBManKey([]string{this.Key, "FileName"}),
 		),
 	)
-	this.FileName = string(
+	this.ImageType = string(
 		bucket.Get(
 			GetDBManKey([]string{this.Key, "ImageType"}),
 		),
