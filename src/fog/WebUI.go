@@ -106,20 +106,27 @@ func (this *TWebUI) DownloadAttachment(response http.ResponseWriter, request *ht
 			op.Tx = tx
 			op.Key = key
 			op.Read()
-			if len(op.Data) > 0 {
-				if op.ImageType == "png" {
-					response.Header().Set("Content-Type", "image/png")
+			if op.Data != nil {
+				if len(op.Data) > 0 {
+					if op.ImageType == "png" {
+						response.Header().Set("Content-Type", "image/png")
+					}
+					if op.ImageType == "jpeg" {
+						response.Header().Set("Content-Type", "image/jpeg")
+					}
+					if op.ImageType == "gif" {
+						response.Header().Set("Content-Type", "image/gif")
+					}
+					response.Write(op.Data)
+				} else {
+					response.Header().Set("Content-Type", "text/plain")
+					response.Write([]byte("No data\n" + key))
+					response.Write([]byte("\nAllowed: " + hgo.BoolToStr(op.Allowed)))
+					response.Write([]byte("\nFileName: '" + op.FileName + "'"))
 				}
-				if op.ImageType == "jpeg" {
-					response.Header().Set("Content-Type", "image/jpeg")
-				}
-				if op.ImageType == "gif" {
-					response.Header().Set("Content-Type", "image/gif")
-				}
-				response.Write(op.Data)
 			} else {
 				response.Header().Set("Content-Type", "text/plain")
-				response.Write([]byte("No data"))
+				response.Write([]byte("Does not exist\n" + key))
 			}
 		}()
 	}

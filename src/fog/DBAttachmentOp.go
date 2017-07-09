@@ -93,9 +93,11 @@ func (this *TDBAttachmentOp) Delete() {
 }
 
 func (this *TDBAttachmentOp) DetectImageType() {
-	var _, typeStr, decodeResult = image.Decode(bytes.NewReader(this.Data))
-	if decodeResult == nil {
-		this.ImageType = typeStr
+	if CheckStringHasSuffixes(this.FileName, ImageFileNameSuffixes) {
+		var _, typeStr, decodeResult = image.Decode(bytes.NewReader(this.Data))
+		if decodeResult == nil {
+			this.ImageType = typeStr
+		}
 	}
 }
 

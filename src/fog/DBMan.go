@@ -157,15 +157,8 @@ func (this *TDBMan) CopyAttachments(tx *bolt.Tx, db *TDBMan) {
 }
 
 func (this *TDBMan) ClearAttachments(tx *bolt.Tx) {
-	var keys [][]byte
-	tx.Bucket(DBManAttachmentsBucketKey).ForEach(
-		func(key, value []byte) error {
-			keys = append(keys, key)
-			return nil
-		})
-	for _, key := range keys {
-		tx.Bucket(DBManAttachmentsBucketKey).Delete(key)
-	}
+	tx.DeleteBucket(DBManAttachmentsBucketKey)
+	tx.CreateBucketIfNotExists(DBManAttachmentsBucketKey)
 }
 
 func (this *TDBMan) GetCountOfAttachments(tx *bolt.Tx) (result int) {
