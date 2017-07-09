@@ -14,8 +14,8 @@ func main() {
 	var afDoc = []string{".doc", ".docx"}
 	hgo.Unuse(afDoc)
 	app.AttachmentFilter = fog.ImageFileNameSuffixes
-	app.AttachmentsModeEnabled = true
-	app.AttachmentTestModeEnabled = false
+	app.AttachmentsModeEnabled = false
+	app.AttachmentTestModeEnabled = true
 	app.EnumAttachmentsModeEnabled = false
 	app.ImageCompressionTestModeEnabled = false
 	app.RunAllowImagesMode = false

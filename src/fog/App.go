@@ -289,7 +289,10 @@ func (this *TApp) RunAttachmentTestMode() {
 		}
 		WriteLog(op.Key)
 		WriteLog(IntToStr(len(op.Data)) + " " + strconv.FormatFloat(float64(op.CompressionRate), 'f', 2, 64))
-		ioutil.WriteFile("data/attachments/"+op.FileName, op.Data, os.ModePerm)
+		var writeFileResult = ioutil.WriteFile("data/attachments/"+op.FileName, op.Data, os.ModePerm)
+		if false {
+			AssertResult(writeFileResult)
+		}
 	})
 	defer op.Tx.Commit()
 	WriteLog("total=" + IntToStr(totalCount) + " allowed=" + IntToStr(allowedCount))
