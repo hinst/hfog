@@ -1,5 +1,6 @@
 .git
 pkg
 node_modules
-db.bolt
+data/db.bolt
+data/db-attachments.bolt
 data/*.xml

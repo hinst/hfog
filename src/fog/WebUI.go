@@ -97,14 +97,25 @@ func (this *TWebUI) GetBug(response http.ResponseWriter, request *http.Request) 
 }
 
 func (this *TWebUI) DownloadAttachment(response http.ResponseWriter, request *http.Request) {
-	WriteLog("Att")
 	var key = request.URL.Query().Get("key")
 	if len(key) > 0 {
 		func() {
 			var tx = this.DB.StartTx(false)
 			defer tx.Commit()
-			var data = this.DB.LoadAttachment(tx, key)
-			response.Write(data)
+			var op TDBAttachmentOp
+			op.Tx = tx
+			op.Key = key
+			op.Read()
+			if op.ImageType == "png" {
+				response.Header().Set("Content-Type", "image/png")
+			}
+			if op.ImageType == "jpeg" {
+				response.Header().Set("Content-Type", "image/jpeg")
+			}
+			if op.ImageType == "gif" {
+				response.Header().Set("Content-Type", "image/gif")
+			}
+			response.Write(op.Data)
 		}()
 	}
 }

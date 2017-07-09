@@ -2,6 +2,7 @@ package fog
 
 import (
 	"encoding/json"
+	"fmt"
 	"hgo"
 	"io/ioutil"
 	"sync"
@@ -17,7 +18,7 @@ type TWebApp struct {
 
 func (this *TWebApp) Create() *TWebApp {
 	if true {
-		println(hgo.MakeRandomString(10))
+		fmt.Println(hgo.MakeRandomString(10))
 	}
 	this.Config.Address = ":9000" // default
 	return this
