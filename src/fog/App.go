@@ -259,7 +259,7 @@ func (this *TApp) GrabAttachmentIfNecess(a TAttachment) bool {
 		var data = this.LoadAttachment(a.SURL.Text)
 		op.Allowed = true //len(data) < 1024*1024
 		if op.Allowed {
-			if CheckStringHasSuffixes(op.FileName, ImageFileNameSuffixes) {
+			if CheckStringHasSuffixes(strings.ToLower(op.FileName), ImageFileNameSuffixes) {
 				var imageData = TCompressImage{TargetWidth: 1000}.Go(data)
 				WriteLog("Image " + IntToStr(len(data)) + " -> " + IntToStr(len(imageData)))
 				data = imageData

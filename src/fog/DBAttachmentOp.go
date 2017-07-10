@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"hgo"
 	"image"
+	"strings"
 
 	"github.com/boltdb/bolt"
 )
@@ -93,7 +94,7 @@ func (this *TDBAttachmentOp) Delete() {
 }
 
 func (this *TDBAttachmentOp) DetectImageType() {
-	if CheckStringHasSuffixes(this.FileName, ImageFileNameSuffixes) {
+	if CheckStringHasSuffixes(strings.ToLower(this.FileName), ImageFileNameSuffixes) {
 		var _, typeStr, decodeResult = image.Decode(bytes.NewReader(this.Data))
 		if decodeResult == nil {
 			this.ImageType = typeStr
