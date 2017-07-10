@@ -67,7 +67,7 @@ func (this *TDBMan) GetTitles() (result map[int]string) {
 		var cursor = bucket.Cursor()
 		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
 			var stringKey = string(key)
-			var intKey = StrToInt0(stringKey)
+			var intKey = hgo.StrToInt0(stringKey)
 			result[intKey] = string(value)
 		}
 		return nil
@@ -83,7 +83,7 @@ func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]TRank
 		var cursor = bucket.Cursor()
 		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
 			var stringKey = string(key)
-			var intKey = StrToInt0(stringKey)
+			var intKey = hgo.StrToInt0(stringKey)
 			var rank = this.CheckBugFits(tx, stringKey, filterWords)
 			if rank > 0 {
 				result[intKey] = TRankedTitle{string(value), rank}
@@ -131,7 +131,7 @@ func (this *TDBMan) ReadBugData(tx *bolt.Tx, bugId string) (result *TBugCaseData
 
 func (this *TDBMan) ReadBugEvents(tx *bolt.Tx, bug *TBugCaseData) {
 	var eventsBucket = DBManGetEventsBucket(tx)
-	var countOfEvents = StrToInt0(string(
+	var countOfEvents = hgo.StrToInt0(string(
 		eventsBucket.Get(GetDBManKey([]string{bug.IxBug, "n"})),
 	))
 	bug.Events.Events = make([]TBugCaseEventData, countOfEvents)

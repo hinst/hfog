@@ -1,5 +1,7 @@
 package fog
 
+import "hgo"
+
 func (this *TBugCaseEventData) LoadDBStruct(a TDBFlatStructArray) {
 	var fields = a.ReadStrings()
 	this.Dt = fields["Dt"]
@@ -12,7 +14,7 @@ func (this *TBugCaseEventData) LoadDBStruct(a TDBFlatStructArray) {
 }
 
 func (this *TBugCaseEventData) LoadDBStructAttachments(fields map[string]string) {
-	var n = StrToInt0(fields["attachments"])
+	var n = hgo.StrToInt0(fields["attachments"])
 	if n > 0 {
 		this.RGAttachments.Attachments = make([]TAttachment, n)
 		for i := 0; i < n; i++ {
