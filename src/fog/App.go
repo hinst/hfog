@@ -319,13 +319,7 @@ func (this *TApp) RunEnumAttachmentsMode() {
 }
 
 func (this *TApp) CheckAttachmentFilterPass(x string) (result bool) {
-	for _, suffix := range this.AttachmentFilter {
-		if strings.HasSuffix(x, suffix) {
-			result = true
-			break
-		}
-	}
-	return
+	return CheckStringHasSuffixes(strings.ToLower(x), this.AttachmentFilter)
 }
 
 func (this *TApp) RunImageCompressionTest() {
