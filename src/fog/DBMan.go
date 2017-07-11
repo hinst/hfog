@@ -4,8 +4,6 @@ import (
 	"hgo"
 	"os"
 
-	"strings"
-
 	"github.com/boltdb/bolt"
 )
 
@@ -77,16 +75,15 @@ func (this *TDBMan) GetTitles() (result map[int]string) {
 	return
 }
 
-func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]TRankedTitle) {
+func (this *TDBMan) GetTitlesFiltered(filter TDBSearchFilter) (result map[int]TRankedTitle) {
 	result = make(map[int]TRankedTitle)
-	var filterWords = strings.Split(filterString, " ")
 	this.db.View(func(tx *bolt.Tx) error {
 		var bucket = DBManGetTitlesBucket(tx)
 		var cursor = bucket.Cursor()
 		for key, value := cursor.First(); key != nil; key, value = cursor.Next() {
 			var stringKey = string(key)
 			var intKey = hgo.StrToInt0(stringKey)
-			var rank = this.CheckBugFits(tx, stringKey, filterWords)
+			var rank = this.CheckBugFits(tx, stringKey, filter)
 			if rank > 0 {
 				result[intKey] = TRankedTitle{string(value), rank}
 			}
@@ -96,10 +93,21 @@ func (this *TDBMan) GetTitlesFiltered(filterString string) (result map[int]TRank
 	return
 }
 
-func (this *TDBMan) CheckBugFits(tx *bolt.Tx, bugId string, filterWords []string) int {
+func (this *TDBMan) CheckBugFits(tx *bolt.Tx, bugId string, filter TDBSearchFilter) (rank int) {
 	var title = string(DBManGetTitlesBucket(tx).Get([]byte(bugId)))
-	//var bug = this.ReadBugData(tx, bugId)
-	return CountStringContainsFromArray(title, filterWords) + CountStringContainsFromArray(bugId, filterWords)
+	rank = CountStringContainsFromArray(title, filter.Words) + CountStringContainsFromArray(bugId, filter.Words)
+	if filter.CommentsEnabled {
+		rank += this.CheckBugCommentsFit(tx, bugId, filter)
+	}
+	return
+}
+
+func (this *TDBMan) CheckBugCommentsFit(tx *bolt.Tx, bugId string, filter TDBSearchFilter) (rank int) {
+	var bug = this.ReadBugData(tx, bugId)
+	for _, event := range bug.Events.Events {
+		rank += CountStringContainsFromArray(event.S.Text, filter.Words)
+	}
+	return
 }
 
 func (this *TDBMan) WriteToFile(filePath string) {
