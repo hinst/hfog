@@ -23,15 +23,17 @@ func (this *TDBMan) Create() *TDBMan {
 func (this *TDBMan) Start() {
 	var o = bolt.DefaultOptions
 	o.ReadOnly = this.ReadOnly
-	var db, dbOpenResult = bolt.Open(this.FilePath, os.ModePerm, nil)
+	var db, dbOpenResult = bolt.Open(this.FilePath, os.ModePerm, o)
 	AssertResult(dbOpenResult)
 	this.db = db
-	this.db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucketIfNotExists(DBManTitlesBucketKey)
-		tx.CreateBucketIfNotExists(DBManEventsBucketKey)
-		tx.CreateBucketIfNotExists(DBManAttachmentsBucketKey)
-		return nil
-	})
+	if false == this.ReadOnly {
+		this.db.Update(func(tx *bolt.Tx) error {
+			tx.CreateBucketIfNotExists(DBManTitlesBucketKey)
+			tx.CreateBucketIfNotExists(DBManEventsBucketKey)
+			tx.CreateBucketIfNotExists(DBManAttachmentsBucketKey)
+			return nil
+		})
+	}
 }
 
 func (this *TDBMan) Stop() {
