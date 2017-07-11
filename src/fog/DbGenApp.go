@@ -67,7 +67,7 @@ func (this *TDBGenApp) ClearEventsHtml(data *TBugCaseData) {
 func (this *TDBGenApp) LoadAttachments() {
 	var attachmentDB = (&TDBMan{}).Create()
 	attachmentDB.FilePath = "data/db-attachments.bolt"
-	attachmentDB.ReadOnly = false
+	attachmentDB.ReadOnly = true
 	attachmentDB.Start()
 	func() {
 		var tx = attachmentDB.StartTx(false)
@@ -83,11 +83,6 @@ func (this *TDBGenApp) LoadAttachments() {
 		var tx = this.DB.StartTx(true)
 		defer tx.Commit()
 		this.DB.CopyAttachments(tx, attachmentDB)
-	}()
-	func() {
-		var tx = this.DB.StartTx(false)
-		defer tx.Commit()
-		WriteLog("destinationAttachments=" + IntToStr(this.DB.GetCountOfAttachments(tx)))
 	}()
 	func() {
 		var tx = this.DB.StartTx(false)
