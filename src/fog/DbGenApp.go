@@ -112,6 +112,7 @@ func (this *TDBGenApp) Run() {
 
 func (this *TDBGenApp) RunDump() {
 	this.DB = (&TDBMan{}).Create()
+	this.DB.FilePath = hgo.AppDir + "/data/db-attachments.bolt"
 	this.DB.Start()
 	this.DumpAttachments()
 	this.DB.Stop()
