@@ -21,7 +21,11 @@ export class FilterArgs {
     }
 }
 
+// Type of args is FilterArgs.
 export function LoadBugListFiltered(args, receiver) {
-    LoadJson("/getBugsFiltered?filter=" + encodeURIComponent(filterString), receiver);
+    var url = "/getBugsFiltered?filter=" + encodeURIComponent(args.filterString);
+    if (args.commentsEnabled)
+        url += "&ce=y";
+    LoadJson(url, receiver);
 }
 

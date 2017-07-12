@@ -31,7 +31,7 @@ class BugListPanel extends React.Component {
 								keywords={this.state.filterString}
 								searchBodyEnabled={this.state.searchBodyEnabled}
 								backClickReceiver={ () => this.receiveSearchPanelClickBack() }
-								searchActReceiver={ (keywords) => this.receiveSearchAct(keywords) }
+								searchActReceiver={ (keywords, searchBodyEnabled) => this.receiveSearchAct(keywords, searchBodyEnabled) }
 							>
 							</BugSearchPanel>
 						</div>
@@ -95,7 +95,10 @@ class BugListPanel extends React.Component {
 		if (this.state.filterString.length === 0)
 			Api.LoadBugList(data => this.receiveBugs(data));
 		else {
-			Api.LoadBugListFiltered(this.state.filterString, data => this.receiveBugs(data));
+			var args = new Api.FilterArgs();
+			args.filterString = this.state.filterString;
+			args.commentsEnabled = this.state.searchBodyEnabled;
+			Api.LoadBugListFiltered(args, data => this.receiveBugs(data));
 		}
 	}
 
@@ -103,11 +106,13 @@ class BugListPanel extends React.Component {
 		this.setState({bugs: data, sortedBugs: null}, () => this.sortBugs());
 	}
 
-	receiveSearchAct(keywords) {
+	receiveSearchAct(keywords, searchBodyEnabled) {
+		console.log(searchBodyEnabled);
 		this.setState(
 			{
 				searchPanelVisible: false,
 				filterString: keywords,
+				searchBodyEnabled: searchBodyEnabled,
 				bugs: null, sortedBugs: null,
 			},
 			() => this.requestBugs());

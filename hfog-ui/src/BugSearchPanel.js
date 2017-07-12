@@ -44,11 +44,12 @@ class BugSearchPanel extends React.Component {
 					className="w3-check"
 					onChange={
 						(event) => {
-							this.setState({searchBodyEnabled: event.target.value});
+							this.setState({searchBodyEnabled: event.target.checked});
 						}
 					}
+					checked={this.state.searchBodyEnabled}
 				/>
-				<label>Search body</label>
+				<label>Search body (slow)</label>
 				<div style={{height: "8px"}}></div>				
 				<button className="w3-btn w3-black" onClick={() => this.receiveGoClick()}>Go</button>
 			</div>
@@ -56,7 +57,7 @@ class BugSearchPanel extends React.Component {
 	}
 
 	receiveGoClick() {
-		this.props.searchActReceiver(this.state.keywords);
+		this.props.searchActReceiver(this.state.keywords, this.state.searchBodyEnabled);
 	}
 
 }
