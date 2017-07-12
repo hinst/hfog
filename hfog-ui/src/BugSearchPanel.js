@@ -52,6 +52,7 @@ class BugSearchPanel extends React.Component {
 				<label>Search body (slow)</label>
 				<div style={{height: "8px"}}></div>				
 				<button className="w3-btn w3-black" onClick={() => this.receiveGoClick()}>Go</button>
+				<p>Subsequential search queries might run a lot faster than the first one because bug data becomes cached in RAM.</p>
 			</div>
 		</div>)
 	}
