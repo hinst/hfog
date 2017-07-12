@@ -7,6 +7,7 @@ class BugSearchPanel extends React.Component {
 		super(props);
 		this.state = {
 			keywords: this.props.keywords,
+			searchBodyEnabled: this.props.searchBodyEnabled,
 		};
 	}
 
@@ -18,8 +19,9 @@ class BugSearchPanel extends React.Component {
 				<div style={{height: "8px"}}></div>
 				<label><b>Keywords:</b></label>
 				<br/>
-				<input 
+				<input
 					type="text"
+					autoFocus
 					ref={(thing) => { this.keywordsField = thing; }} 
 					className="w3-input w3-border" 
 					onChange={
@@ -38,6 +40,15 @@ class BugSearchPanel extends React.Component {
 						}
 					}
 				/>
+				<input type="checkbox"
+					className="w3-check"
+					onChange={
+						(event) => {
+							this.setState({searchBodyEnabled: event.target.value});
+						}
+					}
+				/>
+				<label>Search body</label>
 				<div style={{height: "8px"}}></div>				
 				<button className="w3-btn w3-black" onClick={() => this.receiveGoClick()}>Go</button>
 			</div>
@@ -46,10 +57,6 @@ class BugSearchPanel extends React.Component {
 
 	receiveGoClick() {
 		this.props.searchActReceiver(this.state.keywords);
-	}
-
-	componentDidMount() {
-		this.keywordsField.focus();
 	}
 
 }
