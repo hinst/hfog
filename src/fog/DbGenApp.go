@@ -5,6 +5,7 @@ import (
 	"hgo"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 type TDBGenApp struct {
@@ -12,9 +13,10 @@ type TDBGenApp struct {
 
 	BugsEnabled        bool
 	AttachmentsEnabled bool
+	DumpModeEnabled    bool
 }
 
-func (this *TDBGenApp) Run() {
+func (this *TDBGenApp) RunGenerate() {
 	this.DB = (&TDBMan{}).Create()
 	this.DB.Start()
 	if this.BugsEnabled {
@@ -98,4 +100,36 @@ func (this *TDBGenApp) LoadAttachments() {
 		}
 	}()
 	attachmentDB.Stop()
+}
+
+func (this *TDBGenApp) Run() {
+	if this.DumpModeEnabled {
+		this.RunDump()
+	} else {
+		this.RunGenerate()
+	}
+}
+
+func (this *TDBGenApp) RunDump() {
+	this.DB = (&TDBMan{}).Create()
+	this.DB.Start()
+	this.DumpAttachments()
+	this.DB.Stop()
+}
+
+func (this *TDBGenApp) DumpAttachments() {
+	var tx = this.DB.StartTx(false)
+	defer tx.Commit()
+	var count = 0
+	var op TDBAttachmentOp
+	op.Tx = tx
+	op.HeadMode = true
+	op.ForEach(func() {
+		if CheckStringHasSuffixes(strings.ToLower(op.FileName), []string{".doc", ".docx"}) {
+			WriteLog(op.Key)
+			WriteLog(op.FileName)
+			count++
+		}
+	})
+	WriteLog("count=" + IntToStr(count))
 }

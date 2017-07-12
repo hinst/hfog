@@ -311,6 +311,8 @@ func (this *TApp) RunEnumAttachmentsMode() {
 			for _, attachment := range event.RGAttachments.Attachments {
 				if this.CheckAttachmentFilterPass(attachment.SFileName.Text) {
 					countOfAttachments++
+					WriteLog(attachment.SFileName.Text)
+					WriteLog(attachment.SURL.Text)
 				}
 			}
 		}

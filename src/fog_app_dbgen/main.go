@@ -8,5 +8,6 @@ func main() {
 	var app = (&fog.TDBGenApp{})
 	app.BugsEnabled = true
 	app.AttachmentsEnabled = true
+	app.DumpModeEnabled = true
 	app.Run()
 }
