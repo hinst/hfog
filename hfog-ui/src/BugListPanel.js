@@ -18,7 +18,6 @@ class BugListPanel extends React.Component {
 			pageNumber: 0,
 			pageSize: 100,
 		}
-	  this.requestBugs();
 	}
 
 	render() {
@@ -178,6 +177,10 @@ class BugListPanel extends React.Component {
 				pageNumber++;
 			this.setState({pageNumber: pageNumber});
 		}
+	}
+
+	componentDidMount() {
+		this.requestBugs();
 	}
 
 }
