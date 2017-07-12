@@ -14,7 +14,14 @@ export function LoadBug(bugId, receiver) {
     LoadJson("/getBug?id=" + encodeURIComponent(bugId), receiver);
 }
 
-export function LoadBugListFiltered(filterString, receiver) {
+export class FilterArgs {
+    constructor() {
+        this.filterString = "";
+        this.commentsEnabled = false;
+    }
+}
+
+export function LoadBugListFiltered(args, receiver) {
     LoadJson("/getBugsFiltered?filter=" + encodeURIComponent(filterString), receiver);
 }
 

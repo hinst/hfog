@@ -17,6 +17,7 @@ class BugListPanel extends React.Component {
 			filterString: "",
 			pageNumber: 0,
 			pageSize: 100,
+			searchBodyEnabled: false,
 		}
 	}
 
@@ -28,6 +29,7 @@ class BugListPanel extends React.Component {
 						<div className="overlay-content">
 							<BugSearchPanel 
 								keywords={this.state.filterString}
+								searchBodyEnabled={this.state.searchBodyEnabled}
 								backClickReceiver={ () => this.receiveSearchPanelClickBack() }
 								searchActReceiver={ (keywords) => this.receiveSearchAct(keywords) }
 							>
