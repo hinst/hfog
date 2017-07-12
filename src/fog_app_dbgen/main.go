@@ -6,8 +6,8 @@ import "runtime/debug"
 func main() {
 	debug.SetGCPercent(10)
 	var app = (&fog.TDBGenApp{})
-	app.BugsEnabled = true
+	app.BugsEnabled = false
 	app.AttachmentsEnabled = true
-	app.DumpModeEnabled = true
+	app.DumpModeEnabled = false
 	app.Run()
 }

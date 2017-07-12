@@ -69,7 +69,7 @@ func (this *TDBGenApp) ClearEventsHtml(data *TBugCaseData) {
 func (this *TDBGenApp) LoadAttachments() {
 	var attachmentDB = (&TDBMan{}).Create()
 	attachmentDB.FilePath = "data/db-attachments.bolt"
-	attachmentDB.ReadOnly = true
+	attachmentDB.ReadOnly = false
 	attachmentDB.Start()
 	func() {
 		var tx = attachmentDB.StartTx(false)

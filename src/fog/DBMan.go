@@ -173,6 +173,7 @@ func (this *TDBMan) ClearAttachments(tx *bolt.Tx) {
 
 func (this *TDBMan) GetCountOfAttachments(tx *bolt.Tx) (result int) {
 	var op TDBAttachmentOp
+	op.HeadMode = true
 	op.Tx = tx
 	op.ForEach(func() {
 		result++
@@ -183,6 +184,7 @@ func (this *TDBMan) GetCountOfAttachments(tx *bolt.Tx) (result int) {
 func (this *TDBMan) DetectImageTypes(tx *bolt.Tx) (types map[string]int) {
 	types = make(map[string]int)
 	var op TDBAttachmentOp
+	op.HeadMode = true
 	op.Tx = tx
 	op.ForEach(func() {
 		op.DetectImageType()
