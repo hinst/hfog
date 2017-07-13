@@ -32,6 +32,7 @@ func (this *TWebApp) Run() {
 	this.WebUI = (&TWebUI{}).Create()
 	this.WebUI.DB = this.DB
 	this.WebUI.AccessKey = this.Config.AccessKey
+	this.WebUI.SecondaryAccessKey = this.Config.SecondaryAccessKey
 	this.WebUI.Start()
 	var server = hgo.StartHttpServer(this.Config.Address)
 	this.Holder.Add(1)

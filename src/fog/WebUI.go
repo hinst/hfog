@@ -9,10 +9,11 @@ import (
 )
 
 type TWebUI struct {
-	URL       string
-	ApiURL    string
-	DB        *TDBMan
-	AccessKey string
+	URL                string
+	ApiURL             string
+	DB                 *TDBMan
+	AccessKey          string
+	SecondaryAccessKey string
 }
 
 func (this *TWebUI) Create() *TWebUI {
@@ -59,7 +60,9 @@ func (this *TWebUI) GetBugsFiltered(response http.ResponseWriter, request *http.
 
 func (this *TWebUI) AddRequestHandler(url string, f func(response http.ResponseWriter, request *http.Request)) {
 	var wrappedFunc = func(response http.ResponseWriter, request *http.Request) {
-		if request.URL.Query().Get("AccessKey") == this.AccessKey {
+		var incomingAccessKey = request.URL.Query().Get("AccessKey")
+		if incomingAccessKey == this.AccessKey ||
+			len(this.SecondaryAccessKey) > 0 && incomingAccessKey == this.SecondaryAccessKey {
 			response.Header().Set("Access-Control-Allow-Origin", "*")
 			f(response, request)
 		} else {
