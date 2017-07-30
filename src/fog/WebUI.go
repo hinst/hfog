@@ -77,7 +77,9 @@ func (this *TWebUI) InstallUiFileHandler(subDir string) {
 	var url = this.URL + subDir + "/"
 	var fileDirectory = http.Dir(directoryPath)
 	var fileServerHandler = http.FileServer(fileDirectory)
-	fmt.Println(url + " -> " + directoryPath)
+	if false {
+		fmt.Println(url + " -> " + directoryPath)
+	}
 	http.HandleFunc(url,
 		hgo.WrapFixJavaScriptContentType(
 			http.StripPrefix(url, fileServerHandler),

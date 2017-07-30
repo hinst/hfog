@@ -17,7 +17,7 @@ type TWebApp struct {
 }
 
 func (this *TWebApp) Create() *TWebApp {
-	if true {
+	if false {
 		fmt.Println(hgo.MakeRandomString(10))
 	}
 	this.Config.Address = ":9000" // default
@@ -34,6 +34,8 @@ func (this *TWebApp) Run() {
 	this.WebUI.AccessKey = this.Config.AccessKey
 	this.WebUI.SecondaryAccessKey = this.Config.SecondaryAccessKey
 	this.WebUI.Start()
+	WriteLog("URL is http://localhost" + this.Config.Address + this.WebUI.URL + "/")
+	WriteLog("Press Ctrl+C to quit")
 	var server = hgo.StartHttpServer(this.Config.Address)
 	this.Holder.Add(1)
 	hgo.InstallShutdownReceiver(this.ReceiveShutdownSignal)

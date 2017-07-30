@@ -1,4 +1,7 @@
 export function GetURL() {
-    var urlParams = new URLSearchParams(window.location.search);
-    return "AccessKey=" + encodeURIComponent(urlParams.get("AccessKey"));
+    const urlParams = new URLSearchParams(window.location.search);
+    let accessKey = urlParams.get("AccessKey");
+    if (accessKey == null)
+        accessKey = "";
+    return "AccessKey=" + encodeURIComponent(accessKey);
 }
